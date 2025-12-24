@@ -8,4 +8,7 @@ Pillow
 Counter
 pygbag
 
+# AI (optional, for advice generation)
+openai>=1.0.0
+
 #加完東西要跑一次 source docker_build.sh

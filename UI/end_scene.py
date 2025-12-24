@@ -1,5 +1,5 @@
 import pygame
-from UI.components.base_scene import BaseScene
+from UI.components.base_scene import BaseScene, draw_wrapped_text
 from UI.main_scene import MainScene
 from UI.components.character_animator import CharacterAnimator
 from UI.components.audio_manager import AudioManager
@@ -35,6 +35,7 @@ class EndScene(MainScene):
         button_texts = [
             ("重新開始", "RESTART"),
             ("顯示排行", "SHOW_RANK"),
+            ("查看建議", "ADVICE"),
             ("回饋表單", "FEEDBACK"),
             ("退出遊戲", "QUIT"),
         ]

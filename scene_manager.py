@@ -13,6 +13,7 @@ from UI.diary_scene import DiaryScene
 from UI.sound_control_scene import SoundControlScene
 from UI.end_scene import EndScene
 from UI.feedback_scene import FeedbackScene
+from UI.advice_scene import AdviceScene
 
 # scene_manager.py
 class SceneManager:
