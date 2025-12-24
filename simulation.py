@@ -269,6 +269,40 @@ class Simulation:
         self.plot_midterm_final(highlight_mid=player.midterm, highlight_final=player.final)
         self.plot_total(highlight=player.total_score)
         self.plot_gpa(highlight=player.GPA)
+
+    def run_character_simulation_with_player(self, player, char_cls) -> None:
+        """
+        針對該角色做模擬，並在圖表上 highlight 該玩家的成績。
+        用於在 RankScene 中顯示「該角色下的分佈」。
+        """
+        out_dir = Path(self.out_dir) / f"{char_cls.__name__}_comparison"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 建立新的 Simulation，只針對該角色
+        sim = Simulation(
+            n_players=self.n_players,
+            n_actions=self.n_actions,
+            actions=self.actions,
+            characters=[char_cls],
+            out_dir=str(out_dir),
+            policy=self.policy
+        )
+        sim.run()
+        
+        # 繪製圖表並標註該玩家的成績
+        sim.plot_midterm_final(
+            highlight_mid=player.midterm,
+            highlight_final=player.final,
+            title_add=f" - {char_cls.__name__} Only"
+        )
+        sim.plot_total(
+            highlight=player.total_score,
+            title_add=f" - {char_cls.__name__} Only"
+        )
+        sim.plot_gpa(
+            highlight=player.GPA,
+            title_add=f" - {char_cls.__name__} Only"
+        )
         
 
     def export_gpa_csv(

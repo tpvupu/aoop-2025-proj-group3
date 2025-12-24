@@ -206,7 +206,8 @@ class Yier(Character):
         self.taketest = setting.GIF_PATHS['YIER_NO_STUDY_FRAMES']
         self.ending = setting.GIF_PATHS['YIER_EXCITING_FRAMES']
         self.sad = setting.GIF_PATHS['YIER_SAD_FRAMES']
-        
+    
+
         self.low_mood_limit = 30
         self.low_energy_limit = 30
         self.low_social_limit = 30
