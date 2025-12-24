@@ -95,7 +95,7 @@ class Simulation:
     # --------------------------------------------------
     # 圖表繪製
     # --------------------------------------------------
-    def plot_midterm_final(self, highlight_mid: float | None = None, highlight_final: float | None = None) -> Path:
+    def plot_midterm_final(self, highlight_mid: float | None = None, highlight_final: float | None = None, title_add: str = "") -> Path:
         mid_cnt = Counter(self.midterm)
         fin_cnt = Counter(self.final)
 
@@ -141,7 +141,7 @@ class Simulation:
             plot_highlight(highlight_final, fin_x, smooth_fin_y, "red", "Your Final", self.final)
 
         # 設定圖表標題置左
-        ax.set_title("Midterm & Final Distribution", loc='left')
+        ax.set_title("Midterm & Final Distribution " + title_add, loc='left')
         ax.set_xlabel("Score (0 ~ 100)")
         ax.set_ylabel("People")
         ax.set_xlim(0, 100)  # <--- 固定橫軸範圍
@@ -154,7 +154,7 @@ class Simulation:
         plt.close(fig)
         return out_file
 
-    def plot_total(self, highlight: float | None = None) -> Path:
+    def plot_total(self, highlight: float | None = None, title_add: str = "") -> Path:
         fig, ax = plt.subplots(figsize=(12, 6))
         counts, edges, _ = ax.hist(
             self.total_scores, bins=14, alpha=0.7, edgecolor='black', color="#C89AEB",
@@ -172,7 +172,7 @@ class Simulation:
                     f"Your Total {highlight:.1f}\nTop {pct:.1f}%", 
                     ha="center", va="bottom", fontsize=12)
 
-        ax.set_title("Total Score Distribution", loc='left')
+        ax.set_title("Total Score Distribution " + title_add, loc='left')
         ax.set_xlabel("Total Score"); ax.set_ylabel("People")
         ax.legend(); ax.grid(True); fig.tight_layout()
 
@@ -213,7 +213,7 @@ class Simulation:
     # --------------------------------------------
     # ❹ GPA 直方圖（可標註個人成績）
     # --------------------------------------------
-    def plot_gpa(self, highlight: float | None = None, bins: int = 12) -> Path:
+    def plot_gpa(self, highlight: float | None = None, bins: int = 12, title_add: str = "") -> Path:
         """
         畫 GPA 直方圖  
         - highlight: 你的 GPA (0–4.3)，圖上標一點並顯示 Top-x%
@@ -241,7 +241,7 @@ class Simulation:
                 va="bottom", ha="center", fontsize=12
             )
 
-        ax.set_title("GPA Distribution", loc='left')
+        ax.set_title("GPA Distribution " + title_add, loc='left')
         ax.set_xlabel("GPA (0 ~ 4.3)")
         ax.set_ylabel("People")
         #ax.set_xlim(0, 4.3) 

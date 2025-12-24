@@ -1,9 +1,8 @@
 import random
 
-
 class BehaviorTreePolicy:
     """
-    基礎行為樹策略（保守平衡型）。
+    基礎行為樹策略（作為保守平衡型的範例）。
     Priority (高 -> 低)：
     1) 體力過低先休息
     2) 心情過低先玩遊戲
@@ -29,12 +28,12 @@ class BehaviorTreePolicy:
             return "play_game"
 
         # 3) 知識追目標：越接近期中/期末越想讀書
-        knowledge_target = 20 + week_index * 3  # 簡單線性目標
+        knowledge_target =  week_index * 5  # 簡單線性目標
         if player.knowledge < knowledge_target and "study" in actions:
             return "study"
-
-        # 4) 社交補足
-        if player.social < 40 and "socialize" in actions:
+        
+        # 4) 社交補足：社交值過低時優先社交
+        if player.social < 30 and "socialize" in actions:
             return "socialize"
 
         # 5) 其餘：在可用行為中擇一（偏好讀書/社交）
@@ -52,35 +51,31 @@ class ConservativePolicy(BehaviorTreePolicy):
         # 少量隨機探索
         if random.random() < self.epsilon:
             return random.choice(actions)
+        average_attribute = (player.energy + player.mood + player.social) / 3
         
-        # 計算各項數值偏離平衡點的程度（目標：60左右）
-        energy_deficit = 60 - player.energy
-        mood_deficit = 60 - player.mood
-        social_deficit = 60 - player.social
-        knowledge_target = 25 + week_index * 2.5
-        knowledge_deficit = knowledge_target - player.knowledge
-        
-        # 1) 優先處理嚴重不足的屬性（< 40）
-        if player.energy < 40 and "rest" in actions:
+        # 1) 優先處理不足的屬性（< 35）
+        if player.energy < 35 and "rest" in actions:
             return "rest"
-        if player.mood < 40 and "play_game" in actions:
-            return "play_game"
         if player.social < 35 and "socialize" in actions:
             return "socialize"
-        
-        # 2) 次要處理中等不足的屬性（< 55）
-        if player.energy < 55 and energy_deficit > max(mood_deficit, social_deficit, knowledge_deficit) and "rest" in actions:
-            return "rest"
-        if player.mood < 55 and mood_deficit > max(energy_deficit, social_deficit, knowledge_deficit) and "play_game" in actions:
+        if player.mood < 35 and "play_game" in actions:
             return "play_game"
-        if player.social < 50 and social_deficit > max(energy_deficit, mood_deficit, knowledge_deficit) and "socialize" in actions:
-            return "socialize"
         
-        # 3) 知識補足（較溫和的目標）
-        if knowledge_deficit > 0 and "study" in actions:
+
+        # 2) 知識補足（較溫和的目標）
+        if player.knowledge < week_index * 5 and "study" in actions:
             return "study"
         
-        # 4) 均衡狀態下，輪流做各種行為
+        # 進一步處理相對低的屬性（低於平均值2以上）
+        if player.energy < average_attribute - 2 and "rest" in actions:
+            return "rest"
+        if player.mood < average_attribute - 2 and "play_game" in actions:
+            return "play_game"
+        if player.social < average_attribute - 2 and "socialize" in actions:
+            return "socialize"
+
+        
+        # 3) 均衡狀態下，輪流做各種行為
         return random.choice(actions)
 
 
@@ -94,7 +89,6 @@ class AggressivePolicy(BehaviorTreePolicy):
         super().__init__(epsilon)
         # 可以指定偏好的極端行為，若無則隨機選一個
         self.focus_action = focus_action
-        self.commitment_counter = 0  # 追蹤連續執行同一行為的次數
     
     def choose(self, player, actions: list[str], week_index: int) -> str:
         # 極低隨機性
@@ -105,14 +99,14 @@ class AggressivePolicy(BehaviorTreePolicy):
         if player.energy < 20 and "rest" in actions:
             self.commitment_counter = 0
             return "rest"
-        if player.mood < 25 and "play_game" in actions:
+        if player.mood < 20 and "play_game" in actions:
             self.commitment_counter = 0
             return "play_game"
         
+
         # 2) 期中/期末前衝刺知識（week 6-7 或 13-14）
         if week_index in [6, 7, 13, 14]:
             if player.knowledge < 70 and "study" in actions:
-                self.commitment_counter += 1
                 return "study"
         
         # 3) 選擇或維持極端策略
@@ -123,16 +117,7 @@ class AggressivePolicy(BehaviorTreePolicy):
             elif player.mood < 50:
                 self.focus_action = "play_game"  # 娛樂至上
             else:
-                self.focus_action = random.choice(["study", "socialize"])
-        
-        # 4) 執行極端策略（連續做同一件事）
-        if self.focus_action in actions:
-            self.commitment_counter += 1
-            # 每10次行動，5%機會換個極端策略
-            if self.commitment_counter > 10 and random.random() < 0.05:
-                self.focus_action = random.choice([a for a in actions if a != self.focus_action])
-                self.commitment_counter = 0
-            return self.focus_action
+                self.focus_action = random.choice(["rest", "socialize"]) 
         
         return random.choice(actions)
 
@@ -145,45 +130,28 @@ class CasualPolicy(BehaviorTreePolicy):
     
     def __init__(self, epsilon: float = 0.4) -> None:
         super().__init__(epsilon)
-        self.mood_weight = random.uniform(0.3, 0.7)  # 隨機生成個性化權重
-    
+
     def choose(self, player, actions: list[str], week_index: int) -> str:
-        # 高隨機性：40% 機會完全隨機
+        # 高隨機性探索
         if random.random() < self.epsilon:
             return random.choice(actions)
         
-        # 1) 只在真的受不了時才處理（閾值更低）
-        if player.energy < 25 and random.random() < 0.7 and "rest" in actions:
+        # 1) 嚴重不適時才會調整行為
+        if player.energy < 10 and "rest" in actions:
             return "rest"
-        if player.mood < 30 and random.random() < 0.8 and "play_game" in actions:
+        if player.mood < 10 and "play_game" in actions:
             return "play_game"
+        if player.social < 10 and "socialize" in actions:
+            return "socialize"
         
-        # 2) 期中期末前一週，可能會臨時抱佛腳（但不一定）
-        if week_index in [7, 14] and random.random() < 0.6 and "study" in actions:
-            return "study"
+        # 2) 偶爾讀書，但不強求
+        if player.knowledge < week_index * 4 and "study" in actions:
+            if random.random() < 0.5:
+                return "study"
         
-        # 3) 根據「心情」隨性選擇
-        if player.mood > 70:
-            # 心情好時更願意社交或玩
-            preferred = [a for a in ["socialize", "play_game", "study"] if a in actions]
-        elif player.mood < 40:
-            # 心情差時想休息或玩
-            preferred = [a for a in ["rest", "play_game"] if a in actions]
-        else:
-            # 普通心情，什麼都行
-            preferred = actions
-        
-        # 4) 加入一些「看心情」的隨機性
-        weights = []
-        for action in preferred:
-            if action == "play_game":
-                weights.append(1.5)  # 稍微偏愛娛樂
-            elif action == "socialize":
-                weights.append(1.2)  # 次要偏愛社交
-            else:
-                weights.append(1.0)
-        
-        return random.choices(preferred, weights=weights)[0]
+        # 3) 隨性選擇其他行為
+        return random.choice(actions)
+    
 
 
 class FSMBehaviorPolicy:

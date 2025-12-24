@@ -155,9 +155,9 @@ def test_fsm_policy_with_details():
     print("✓")
     
     print(f"正在生成圖表... ", end='', flush=True)
-    sim.plot_midterm_final()
-    sim.plot_total()
-    sim.plot_gpa()
+    sim.plot_midterm_final(title_add=" (FSM Policy)")
+    sim.plot_total(title_add=" (FSM Policy)")
+    sim.plot_gpa(title_add=" (FSM Policy)")
     sim.export_gpa_csv()
     print("✓")
     
@@ -184,10 +184,10 @@ def compare_all_policies():
     print(f"{'='*70}\n")
     
     policies = {
-        "保守平衡型": ConservativePolicy(epsilon=0.1),
-        "激進極端型": AggressivePolicy(epsilon=0.05),
-        "隨性自由型": CasualPolicy(epsilon=0.4),
-        "有限狀態機": FSMBehaviorPolicy()
+        "Conservative": ConservativePolicy(epsilon=0.1),
+        "Aggressive": AggressivePolicy(epsilon=0.05),
+        "Casual": CasualPolicy(epsilon=0.4),
+        "FSM": FSMBehaviorPolicy()
     }
     
     results = {}
@@ -207,7 +207,7 @@ def compare_all_policies():
         }
     
     # 顯示比較表格
-    print(f"\n{'策略':<12} {'期中':>7} {'期末':>7} {'知識':>7} {'GPA':>7} {'標準差':>7}")
+    print(f"\n{'策略':<9} {'期中':>5} {'期末':>5} {'知識':>5} {'GPA':>5} {'標準差':>5}")
     print("-" * 70)
     for name, stats in results.items():
         print(f"{name:<12} {stats['midterm']:7.2f} {stats['final']:7.2f} "
@@ -231,6 +231,79 @@ def compare_all_policies():
     
     return results
 
+
+def compare_policies_by_character(n_players: int = 300):
+    """針對四種角色分別測試三種個性策略，並輸出圖表與統計。"""
+    print(f"\n{'='*70}")
+    print(f"  🧪 角色 × 個性 策略對照（每組 {n_players} 名玩家）")
+    print(f"{'='*70}\n")
+
+    characters = [Bubu, Yier, Mitao, Huihui]
+    policies = {
+        "Conservative": ConservativePolicy(epsilon=0.1),
+        "Aggressive  ": AggressivePolicy(epsilon=0.05),
+        "Casual      ": CasualPolicy(epsilon=0.4),
+    }
+
+    # 結果收集：{character: {policy: stats}}
+    all_results: dict[str, dict[str, dict]] = {}
+
+    for char_cls in characters:
+        char_name = char_cls.__name__
+        print(f"🔹 角色：{char_name}")
+        all_results[char_name] = {}
+
+        for policy_name, policy in policies.items():
+            print(f"  └─ 模擬 {policy_name}... ", end='', flush=True)
+            out_dir = f"simulation_plots/{char_name}_run/{policy_name.replace(' ', '')}_policy"
+
+            sim = Simulation(
+                n_players=n_players,
+                policy=policy,
+                characters=[char_cls],
+                out_dir=out_dir,
+            )
+
+            sim.run()
+            sim.plot_midterm_final(title_add=f" ({char_name} - {policy_name})")
+            sim.plot_total(title_add=f" ({char_name} - {policy_name})")
+            sim.plot_gpa(title_add=f" ({char_name} - {policy_name})")
+            sim.export_gpa_csv()
+            print("✓")
+
+            stats = {
+                'midterm': statistics.mean(sim.midterm),
+                'final': statistics.mean(sim.final),
+                'knowledge': statistics.mean(sim.knowledge),
+                'gpa': statistics.mean(sim.gpa),
+                'gpa_std': statistics.stdev(sim.gpa) if len(sim.gpa) > 1 else 0,
+            }
+            all_results[char_name][policy_name] = stats
+
+        # 角色總結表格
+        print(f"\n  📈 {char_name} 總結：")
+        print(f"    {'策略':<10} {'期中':>7} {'期末':>7} {'知識':>7} {'GPA':>7} {'標準差':>7}")
+        print("    " + "-" * 60)
+        for policy_name, stats in all_results[char_name].items():
+            print(
+                f"    {policy_name:<10} {stats['midterm']:7.2f} {stats['final']:7.2f} "
+                f"{stats['knowledge']:7.2f} {stats['gpa']:7.2f} {stats['gpa_std']:7.2f}"
+            )
+
+        # 找出該角色的最佳策略
+        best_gpa = max(all_results[char_name].items(), key=lambda x: x[1]['gpa'])
+        best_knowledge = max(all_results[char_name].items(), key=lambda x: x[1]['knowledge'])
+        most_stable = min(all_results[char_name].items(), key=lambda x: x[1]['gpa_std'])
+
+        print(
+            f"\n  🏆 {char_name} — 最高 GPA: {best_gpa[0]} ({best_gpa[1]['gpa']:.2f}) | "
+            f"最高知識: {best_knowledge[0]} ({best_knowledge[1]['knowledge']:.2f}) | "
+            f"最穩定: {most_stable[0]} (Std {most_stable[1]['gpa_std']:.2f})\n"
+        )
+
+    print(f"{'='*70}\n")
+    print("所有輸出已保存到 simulation_plots/{角色}_run/{策略}_policy 目錄")
+    return all_results
 
 if __name__ == "__main__":
     print("\n" + "="*70)
@@ -266,6 +339,9 @@ if __name__ == "__main__":
     
     # 5. 比較所有策略
     all_results = compare_all_policies()
+
+    # 6. 角色 × 個性 三向測試
+    compare_policies_by_character(n_players=300)
     
     print(f"\n{'='*70}")
     print("  ✅ 測試完成！".center(70))
