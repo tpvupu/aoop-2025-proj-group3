@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-client = OpenAI(api_key="YOUR_API_KEY")
+client = OpenAI(api_key="")
 
 # 讀檔
 with open("input.txt", "r", encoding="utf-8") as f:
