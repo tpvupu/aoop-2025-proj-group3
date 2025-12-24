@@ -207,7 +207,7 @@ def compare_all_policies():
         }
     
     # 顯示比較表格
-    print(f"\n{'策略':<9} {'期中':>5} {'期末':>5} {'知識':>5} {'GPA':>5} {'標準差':>5}")
+    print(f"\n{'策略':<9} {'期中':>5} {'期末':>5} {'知識':>5} {'GPA':>6} {'標準差':>5}")
     print("-" * 70)
     for name, stats in results.items():
         print(f"{name:<12} {stats['midterm']:7.2f} {stats['final']:7.2f} "
@@ -241,8 +241,8 @@ def compare_policies_by_character(n_players: int = 300):
     characters = [Bubu, Yier, Mitao, Huihui]
     policies = {
         "Conservative": ConservativePolicy(epsilon=0.1),
-        "Aggressive  ": AggressivePolicy(epsilon=0.05),
-        "Casual      ": CasualPolicy(epsilon=0.4),
+        "Aggressive": AggressivePolicy(epsilon=0.05),
+        "Casual": CasualPolicy(epsilon=0.4),
     }
 
     # 結果收集：{character: {policy: stats}}
@@ -282,11 +282,11 @@ def compare_policies_by_character(n_players: int = 300):
 
         # 角色總結表格
         print(f"\n  📈 {char_name} 總結：")
-        print(f"    {'策略':<10} {'期中':>7} {'期末':>7} {'知識':>7} {'GPA':>7} {'標準差':>7}")
+        print(f"    {'策略':<9} {'期中':>5} {'期末':>5} {'知識':>6} {'GPA':>6} {'標準差':>7}")
         print("    " + "-" * 60)
         for policy_name, stats in all_results[char_name].items():
             print(
-                f"    {policy_name:<10} {stats['midterm']:7.2f} {stats['final']:7.2f} "
+                f"    {policy_name:<14} {stats['midterm']:7.2f} {stats['final']:7.2f} "
                 f"{stats['knowledge']:7.2f} {stats['gpa']:7.2f} {stats['gpa_std']:7.2f}"
             )
 
