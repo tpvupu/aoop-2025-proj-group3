@@ -9,6 +9,13 @@ from collections import Counter
 from pathlib import Path
 from bisect import bisect_left  # ★ 用來算 percentile
 import csv
+from bvtree import (
+    BehaviorTreePolicy, 
+    ConservativePolicy, 
+    AggressivePolicy, 
+    CasualPolicy,
+    FSMBehaviorPolicy
+)
 
 class Simulation:
     """
@@ -19,11 +26,13 @@ class Simulation:
     out_dir   : 圖檔輸出資料夾
     """
     def __init__(self, n_players: int = 300, n_actions: int = 16,
-                 actions=None, characters=None, out_dir: str = setting.SIMULATION_PLOTS_DIR) -> None:
+                 actions=None, characters=None, out_dir: str = setting.SIMULATION_PLOTS_DIR,
+                 policy: BehaviorTreePolicy | None = None) -> None:
         self.n_players = n_players
         self.n_actions = n_actions
         self.actions = actions or ["study", "rest", "play_game", "socialize"]
         self.characters = characters or [Bubu, Yier, Mitao, Huihui]
+        self.policy = policy or BehaviorTreePolicy()
 
         # 迴圈結束後才會填進來的屬性
         self.midterm, self.final = [], []
@@ -43,13 +52,15 @@ class Simulation:
         for _ in range(self.n_players):
             player = random.choice(self.characters)()
             for _ in range(7):
-                getattr(player, random.choice(self.actions))(1)
+                action = self._choose_action(player)
+                getattr(player, action)(1)
                 player.week_number += 1
 
             player.get_midterm()
 
             for _ in range(7):
-                getattr(player, random.choice(self.actions))(1)
+                action = self._choose_action(player)
+                getattr(player, action)(1)
                 player.week_number += 1
 
             player.get_final()
@@ -60,6 +71,14 @@ class Simulation:
             self.knowledge.append(player.knowledge)
             self.gpa.append(player.GPA)
             self.total_scores.append(player.total_score)
+
+    def _choose_action(self, player) -> str:
+        """用行為樹或隨機策略決定下一步行動。"""
+        week_index = player.week_number
+        action = self.policy.choose(player, self.actions, week_index)
+        if action not in self.actions:
+            action = random.choice(self.actions)
+        return action
 
     
     # --------------------------------------------------
@@ -346,7 +365,7 @@ class Simulation:
 # 範例呼叫
 # -------------------------------
 if __name__ == "__main__":
-    sim = Simulation()
-    sim.plot_all_characters()
-    sim.plot_all_chosen()
+    policy = BehaviorTreePolicy(epsilon=0.1)
+    sim = Simulation(policy=policy)
+    sim.run_and_plot_all()
 
