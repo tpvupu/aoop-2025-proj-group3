@@ -141,14 +141,13 @@ class GradingScene(BaseScene):
                             self.audio.stop_sound(setting.SoundEffect.CHEER_CHEER_PATH)
                         self.audio.play_sound(setting.SoundEffect.CHEER_CHEER_PATH)
                         self.ending_anim_switch = True  # 切換動畫後設置為 True")
-                    if self.displayed_score > int(self.score):
+                    if self.displayed_score >= int(self.score):
                         self.displayed_score = int(self.score)
+                        self.audio.play_sound(setting.SoundEffect.BLING_PATH)  # 播放成績完成音效
                 else: 
-                    self.show_full_score = True
-                    self.audio.stop_sound(setting.SoundEffect.SMALL_DRUM_PATH)  # 停止跳分音效
-                    # 播放成績完成音效
-                    self.audio.play_sound(setting.SoundEffect.BLING_PATH)  # 播放成績完成音效
+                    self.show_full_score = True                    
                     # 淡入恢復背景音樂
+                    self.audio.stop_sound(setting.SoundEffect.SMALL_DRUM_PATH)  # 停止跳分音效
                     self.audio.play_bgm(setting.BGM.MITAO_HUIHUI_PATH, loop=-1)
                     
         
