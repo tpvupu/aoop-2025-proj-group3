@@ -13,6 +13,7 @@ from UI.diary_scene import DiaryScene
 from UI.sound_control_scene import SoundControlScene
 from UI.end_scene import EndScene
 from UI.feedback_scene import FeedbackScene
+from UI.advice_scene import AdviceScene
 
 # scene_manager.py
 class SceneManager:
@@ -31,6 +32,7 @@ class SceneManager:
             "SHOW_INTRO": self.intro_scene,
             "RANK": self.rank_scene,
             "END": self.end_scene,
+            "ADVICE": self.advice_scene,
             "FEEDBACK": self.feedback_scene,
             "RESTART": self.restart_game,
             "QUIT": self.quit_game,
@@ -153,8 +155,17 @@ class SceneManager:
         return {
             "DIARY": "DIARY",
             "SHOW_RANK": "RANK",
+            "ADVICE": "ADVICE",
             "RESTART": "RESTART",
             "FEEDBACK": "FEEDBACK",
+            "QUIT": "QUIT"
+        }.get(result, "END")
+
+    def advice_scene(self):
+        scene = AdviceScene(self.screen, self.player)
+        result = scene.run()
+        return {
+            "END": "END",
             "QUIT": "QUIT"
         }.get(result, "END")
 

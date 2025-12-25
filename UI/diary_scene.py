@@ -19,6 +19,11 @@ class DiaryScene(BaseScene):
         self.btn_left = ImageButton("resource/image/left.png", (100, 700), size=(80, 80))
         self.btn_right = ImageButton("resource/image/right.png", (980, 700), size=(80, 80))
         self.btn_back = ImageButton("resource/image/back.png", (90, 20), size=(100, 100))
+        # Advice toggle
+        self.advice_text = None
+        self.advice_font = pygame.font.Font(setting.JFONT_PATH_Light, 28)
+        self.advice_hint = pygame.font.Font(setting.JFONT_PATH_REGULAR, 24).render("按 A 生成本週建議", True, (60, 60, 60))
+        self.advice_hint_rect = self.advice_hint.get_rect(topleft=(160, 680))
 
     def draw(self):
         
@@ -45,6 +50,12 @@ class DiaryScene(BaseScene):
                         elif value < 0:
                             content += f"{attr} {value}  "
                 draw_wrapped_text(self.screen, content, self.font, self.text_rect, (50,30,30),48)
+        # Advice block
+        if self.advice_text:
+            advice_rect = pygame.Rect(150, 420, 900, 300)
+            draw_wrapped_text(self.screen, "AI 建議：\n" + self.advice_text, self.advice_font, advice_rect, (20,20,70), 36)
+        else:
+            self.screen.blit(self.advice_hint, self.advice_hint_rect)
         self.animator.draw(self.screen)
         self.btn_left.draw(self.screen)
         self.btn_right.draw(self.screen)
@@ -73,4 +84,14 @@ class DiaryScene(BaseScene):
                         self.animator = self.player.gif_choose(self.week_index+1, (850, 450), (200, 200))
                     elif self.btn_back.rect.collidepoint(event.pos):
                         return "BACK"
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+                    # Lazy import to avoid overhead in gameplay loop
+                    try:
+                        from services.feedback_generator import generate_weekly_advice
+                        sorted_weeks = sorted(self.player.event_history.keys())
+                        if 0 <= self.week_index < len(sorted_weeks):
+                            week = sorted_weeks[self.week_index]
+                            self.advice_text = generate_weekly_advice(self.player, week)
+                    except Exception as _:
+                        self.advice_text = "(產生建議失敗，請稍後再試或檢查網路/API 設定)"
         return None
