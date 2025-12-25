@@ -14,7 +14,7 @@ class Character:
         self.knowledge = 0.00
         self.midterm = 0     # 期中考成績
         self.final = 0       # 期末考成績
-        self.week_number = 12
+        self.week_number =0
         self.lucky_prof = 3
         self.total_score = 0
         self.GPA = 0

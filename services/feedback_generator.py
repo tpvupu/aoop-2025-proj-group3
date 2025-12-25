@@ -51,7 +51,7 @@ def _build_prompt(player, week: int) -> str:
     )
     return prompt
 
-
+'''
 def generate_weekly_advice(player, week: int) -> str:
     """Generate weekly advice using OpenAI API if available; fallback to heuristic text."""
     # Prefer OpenAI if SDK and key exist
@@ -73,7 +73,7 @@ def generate_weekly_advice(player, week: int) -> str:
     # Fallback: no SDK or no key
     return _heuristic_advice(player, week)
 
-
+'''
 def _heuristic_advice(player, week: int, error: str | None = None) -> str:
     """Simple local advice when API is unavailable."""
     counts = _summarize_actions(player, until_week=week)
