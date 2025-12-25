@@ -35,7 +35,7 @@ class EndScene(MainScene):
         button_texts = [
             ("重新開始", "RESTART"),
             ("顯示排行", "SHOW_RANK"),
-            ("查看建議", "ADVICE"),
+            ("結果分析", "ADVICE"),
             ("回饋表單", "FEEDBACK"),
             ("退出遊戲", "QUIT"),
         ]
@@ -243,21 +243,21 @@ class EndScene(MainScene):
         title_surf = self.title_font.render(
             f"Congratulation!!", True, (50, 50, 50)
         )
-        title_rect = title_surf.get_rect(center=(self.SCREEN_WIDTH // 2 + 200, 120))
+        title_rect = title_surf.get_rect(center=(self.SCREEN_WIDTH // 2 + 200, 70))
         self.screen.blit(title_surf, title_rect)
 
         # 印出玩家的GPA
         gpa_surf = self.subtitle_font.render(
             f"{self.player.name}'s Final GPA：{self.player.GPA:.2f}", True, (50, 50, 50)
         )
-        gpa_rect = gpa_surf.get_rect(center=(self.SCREEN_WIDTH // 2 + 200, 200))
+        gpa_rect = gpa_surf.get_rect(center=(self.SCREEN_WIDTH // 2 + 200, 150))
         self.screen.blit(gpa_surf, gpa_rect)
 
         # 副標題
         subtitle_surf = self.subtitle_font.render(
             f"期中考：{self.player.midterm}, 期末考：{self.player.final}", True, (50, 50, 50)
         )
-        subtitle_rect = subtitle_surf.get_rect(center=(self.SCREEN_WIDTH // 2 + 200 , 250))
+        subtitle_rect = subtitle_surf.get_rect(center=(self.SCREEN_WIDTH // 2 + 200 , 200))
         self.screen.blit(subtitle_surf, subtitle_rect)
 
 

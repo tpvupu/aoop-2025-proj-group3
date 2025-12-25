@@ -149,7 +149,9 @@ class SceneManager:
             }.get(result, "END")
 
     def end_scene(self):
-        self.player.calculate_GPA()
+        if not self.player.GPA:
+            self.player.calculate_GPA()
+
         scene = EndScene(self.screen, self.player)
         result = scene.run()
         return {
