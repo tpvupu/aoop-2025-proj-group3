@@ -38,6 +38,7 @@ class Simulation:
         self.midterm, self.final = [], []
         self.knowledge, self.gpa = [], []
         self.total_scores = []
+        self.player_records = []  # 記錄每個玩家的詳細資訊
         self.out_dir = Path(out_dir)
         self.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -48,11 +49,16 @@ class Simulation:
         """執行整體模擬，產生所有 raw data。"""
         self.midterm.clear(); self.final.clear()
         self.knowledge.clear(); self.gpa.clear()
+        self.player_records.clear()
 
         for _ in range(self.n_players):
-            player = random.choice(self.characters)()
+            player_class = random.choice(self.characters)
+            player = player_class()
+            action_history = []  # 記錄該玩家的所有動作
+            
             for _ in range(7):
                 action = self._choose_action(player)
+                action_history.append(action)
                 getattr(player, action)(1)
                 player.week_number += 1
 
@@ -60,6 +66,7 @@ class Simulation:
 
             for _ in range(7):
                 action = self._choose_action(player)
+                action_history.append(action)
                 getattr(player, action)(1)
                 player.week_number += 1
 
@@ -71,6 +78,17 @@ class Simulation:
             self.knowledge.append(player.knowledge)
             self.gpa.append(player.GPA)
             self.total_scores.append(player.total_score)
+            
+            # 記錄完整資訊
+            self.player_records.append({
+                'character': player_class.__name__,
+                'gpa': player.GPA,
+                'midterm': player.midterm,
+                'final': player.final,
+                'total_score': player.total_score,
+                'actions': action_history,
+                'action_counts': Counter(action_history)
+            })
 
     def _choose_action(self, player) -> str:
         """用行為樹或隨機策略決定下一步行動。"""
@@ -266,9 +284,9 @@ class Simulation:
 
     def run_and_plot_all_with_player(self, player) -> None:
         self.run()
-        self.plot_midterm_final(highlight_mid=player.midterm, highlight_final=player.final)
-        self.plot_total(highlight=player.total_score)
-        self.plot_gpa(highlight=player.GPA)
+        self.plot_midterm_final(highlight_mid=player.midterm, highlight_final=player.final,title_add=" - All Characters")
+        self.plot_total(highlight=player.total_score, title_add=" - All Characters")
+        self.plot_gpa(highlight=player.GPA, title_add=" - All Characters")
 
     def run_character_simulation_with_player(self, player, char_cls) -> None:
         """
@@ -392,6 +410,73 @@ class Simulation:
             sim.plot_total()
             sim.plot_gpa()
             sim.export_gpa_csv()
+
+    def show_top_players(self, top_n: int = 10) -> None:
+        """顯示 GPA 最高的前幾名玩家的詳細資訊"""
+        if not self.player_records:
+            print("請先執行 run() 進行模擬！")
+            return
+        
+        # 依 GPA 由高到低排序
+        sorted_players = sorted(self.player_records, key=lambda x: x['gpa'], reverse=True)
+        
+        print(f"\n{'='*80}")
+        print(f"GPA 最高的前 {top_n} 名玩家詳細資訊")
+        print(f"{'='*80}\n")
+        
+        for i, player in enumerate(sorted_players[:top_n], 1):
+            print(f"第 {i} 名")
+            print(f"  角色: {player['character']}")
+            print(f"  GPA: {player['gpa']:.2f}")
+            print(f"  期中考: {player['midterm']:.1f}")
+            print(f"  期末考: {player['final']:.1f}")
+            print(f"  總分: {player['total_score']:.1f}")
+            print(f"  動作統計:")
+            for action, count in sorted(player['action_counts'].items(), key=lambda x: x[1], reverse=True):
+                percentage = count / 14 * 100  # 總共 14 個動作
+                print(f"    - {action}: {count} 次 ({percentage:.1f}%)")
+            print(f"  動作順序: {' → '.join(player['actions'])}")
+            print()
+
+    def show_top_players_by_character(self, top_n: int = 3) -> None:
+        """分別顯示每個角色 GPA 最高的前幾名"""
+        if not self.player_records:
+            print("請先執行 run() 進行模擬！")
+            return
+        
+        # 按角色分組
+        from collections import defaultdict
+        character_groups = defaultdict(list)
+        for player in self.player_records:
+            character_groups[player['character']].append(player)
+        
+        # 對每個角色的玩家按 GPA 排序
+        for char_name in character_groups:
+            character_groups[char_name].sort(key=lambda x: x['gpa'], reverse=True)
+        
+        print(f"\n{'='*80}")
+        print(f"每個角色 GPA 最高的前 {top_n} 名")
+        print(f"{'='*80}\n")
+        
+        # 按角色名稱排序輸出
+        for char_name in sorted(character_groups.keys()):
+            players = character_groups[char_name]
+            print(f"【{char_name}】 角色 Top {top_n}")
+            print(f"{'-'*80}")
+            
+            for i, player in enumerate(players[:top_n], 1):
+                print(f"\n  第 {i} 名")
+                print(f"    GPA: {player['gpa']:.2f}")
+                print(f"    期中考: {player['midterm']:.1f}")
+                print(f"    期末考: {player['final']:.1f}")
+                print(f"    總分: {player['total_score']:.1f}")
+                print(f"    動作統計:")
+                for action, count in sorted(player['action_counts'].items(), key=lambda x: x[1], reverse=True):
+                    percentage = count / 14 * 100
+                    print(f"      - {action}: {count} 次 ({percentage:.1f}%)")
+                print(f"    動作順序: {' → '.join(player['actions'])}")
+            
+            print(f"\n{'-'*80}\n")
 
 
 

@@ -156,7 +156,7 @@ class RankScene(BaseScene):
         panel_height = 420
         
         # 背景面板
-        pygame.draw.rect(screen, (220, 220, 220), (panel_x, panel_y, panel_width, panel_height), border_radius=10)
+        pygame.draw.rect(screen, (170, 170, 170), (panel_x, panel_y, panel_width, panel_height), border_radius=10)
         pygame.draw.rect(screen, (100, 100, 100), (panel_x, panel_y, panel_width, panel_height), 2, border_radius=10)
         
         # 按鈕 1: 全角色
@@ -190,7 +190,7 @@ class RankScene(BaseScene):
         hint3 = hint_font.render("Esc 退出", True, (40, 40, 40))
         screen.blit(hint1, (panel_x + 100, panel_y + 330))
         screen.blit(hint2, (panel_x + 100, panel_y + 360))
-        screen.blit(hint3, (panel_x + 120, panel_y + 390))
+        screen.blit(hint3, (panel_x + 115, panel_y + 390))
         
         # 儲存按鈕矩形供事件處理使用
         self.button1_rect = button1_rect
