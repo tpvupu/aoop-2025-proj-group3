@@ -107,11 +107,11 @@ class Character:
         return int(round(grade))
     
     def get_final(self):
-        self.final = round(self.calculate_grade()) -15
+        self.final = round(self.calculate_grade()) -10
 
     def calculate_GPA(self):
-        total_score = self.midterm * 0.35 + self.final * 0.35 + (self.knowledge) * 0.3
-        total_score = max(0, int(math.sqrt(total_score) * 13 - 30))#適當調分
+        total_score = self.midterm * 0.40 + self.final * 0.40 + (self.knowledge) * 0.2
+        total_score = max(0, int(math.sqrt(total_score) * 15 - 50))#適當調分
         self.total_score = total_score
         gpa = []
         for _ in range(25):
@@ -191,6 +191,7 @@ class Bubu(Character):
         if self.knowledge > 35:
             self.midterm += 6
         self.midterm = int(round(self.midterm))
+        self.midterm -= 5
 
 
 class Yier(Character):
@@ -240,6 +241,7 @@ class Yier(Character):
         if self.knowledge > 40:
             self.midterm += 4
         self.midterm = int(round(self.midterm))
+        self.midterm -= 7
 
 
 class Mitao(Character):
@@ -289,6 +291,7 @@ class Mitao(Character):
         if self.knowledge > 45:
             self.midterm += 5
         self.midterm = int(round(self.midterm))
+        
 
 
 
@@ -342,6 +345,7 @@ class Huihui(Character):
         if self.knowledge > 30:
             self.midterm += 2
         self.midterm = int(round(self.midterm))
+        self.midterm -= 5
 
 
 

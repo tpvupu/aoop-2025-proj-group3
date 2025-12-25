@@ -27,12 +27,12 @@ class Simulation:
     """
     def __init__(self, n_players: int = 300, n_actions: int = 16,
                  actions=None, characters=None, out_dir: str = setting.SIMULATION_PLOTS_DIR,
-                 policy: BehaviorTreePolicy | None = None) -> None:
+                 policy: CasualPolicy | None = None) -> None:
         self.n_players = n_players
         self.n_actions = n_actions
         self.actions = actions or ["study", "rest", "play_game", "socialize"]
         self.characters = characters or [Bubu, Yier, Mitao, Huihui]
-        self.policy = policy or BehaviorTreePolicy()
+        self.policy = policy or CasualPolicy()
 
         # 迴圈結束後才會填進來的屬性
         self.midterm, self.final = [], []
