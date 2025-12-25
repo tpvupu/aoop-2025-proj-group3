@@ -5,6 +5,11 @@
 本專案實作了一個**有限狀態機（FSM）** + **行為樹（Behavior Tree）**的混合 AI 決策系統，用於模擬學生在學期中如何決定每週的行動（讀書、休息、玩遊戲、社交）。
 
 ---
+OpenAI Key
+```
+export OPENAI_API_KEY="your_api_key_here"
+```
+---
 
 ## 🌲 三種行為樹策略
 
