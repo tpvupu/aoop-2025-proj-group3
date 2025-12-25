@@ -24,8 +24,8 @@ class AdviceScene(BaseScene):
         
         # 字體
         self.title_font = pygame.font.Font(setting.JFONT_PATH_BOLD, 52)
-        self.section_font = pygame.font.Font(setting.JFONT_PATH_REGULAR, 32)
-        self.content_font = pygame.font.Font(setting.JFONT_PATH_Light, 26)
+        self.section_font = pygame.font.Font(setting.JFONT_PATH_REGULAR, 28)
+        self.content_font = pygame.font.Font(setting.JFONT_PATH_Light, 24)
         
         # 角色動畫
         self.animator = CharacterAnimator(
@@ -44,8 +44,8 @@ class AdviceScene(BaseScene):
             self.prompt_text, True, (100, 100, 100)
         )
         
-        # 顯示位置
-        self.content_rect = pygame.Rect(400, 80, 750, 700)
+        # 顯示位置（增加高度以容納更多內容）
+        self.content_rect = pygame.Rect(400, 80, 750, 750)
         
         # 生成建議
         self._generate_advice()
@@ -118,7 +118,7 @@ class AdviceScene(BaseScene):
                 self.content_font,
                 self.content_rect,
                 (30, 30, 30),
-                32
+                28  # 減小行距以容納更多文字
             )
         
         # 返回提示
