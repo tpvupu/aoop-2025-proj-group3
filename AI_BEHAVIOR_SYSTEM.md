@@ -98,7 +98,7 @@ if pid not in self._focus_for_player or self._focus_for_player[pid] not in actio
 **特性：** 高隨機性，跟隨直覺，沒有嚴格計劃
 
 **決策邏輯：**
-1. 高隨機性探索
+1. 高隨機性探索(不根據此策略行動)
 ```python
     if random.random() < self.epsilon:
         return random.choice(actions)
@@ -112,6 +112,12 @@ if pid not in self._focus_for_player or self._focus_for_player[pid] not in actio
             return "play_game"
         if player.social < 10 and "socialize" in actions:
             return "socialize"
+```
+3.  讀書是「可有可無」而且是隨機的，知識未達目標 (週數*5) → 概率性讀書
+```python
+if player.knowledge < week_index * 4 and "study" in actions:
+            if random.random() < 0.5:
+                return "study"
 ```
 優先級從高到低：
 1. 40% 機會完全隨機（高探索率）
