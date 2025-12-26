@@ -2,7 +2,7 @@ import pygame
 from UI.components.character_animator import CharacterAnimator
 from UI.components.base_scene import BaseScene
 from UI.components.audio_manager import AudioManager
-from simulation import Simulation
+from test.simulation import Simulation
 from character import Bubu, Yier, Mitao, Huihui
 import setting
 
