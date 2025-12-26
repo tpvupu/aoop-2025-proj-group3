@@ -162,45 +162,36 @@ CONSERVATIVE ←───────→ AGGRESSIVE
 ### 狀態轉換條件
 
 #### CONSERVATIVE → AGGRESSIVE
-- 考試週（week 6, 7, 13, 14）且知識 < 40
-- **意義：** 發現考試快到了但知識不足，開始緊張讀書
-
-#### CONSERVATIVE → CASUAL
-- 壓力指數 < 0.3 且待在保守狀態 > 2 週
-- 30% 機率觸發
-- **意義：** 狀態良好，放鬆一下
-
-#### AGGRESSIVE → CONSERVATIVE
-- 壓力指數 > 0.7（任一屬性過低）
-- **意義：** 太拼了導致身心崩潰，需要恢復平衡
-
-#### AGGRESSIVE → CASUAL
-- 考試結束週（week 8, 9, 15, 16）
-- 40% 機率觸發
-- **意義：** 考完試了，放鬆慶祝
-
-#### CASUAL → CONSERVATIVE
-- 壓力指數 > 0.6（狀態失衡）
-- **意義：** 玩太多了，發現狀態不對勁
-
-#### CASUAL → AGGRESSIVE
-- 考前週（week 5, 6, 12, 13）
-- 25% 機率觸發
-- **意義：** 突然覺醒，想要認真一下
-
-#### CASUAL 內部轉換
-- 待超過 4 週且 20% 機率
-- **意義：** 隨性的人可能突然換心情
-
-### 壓力指數計算
+- 考試前兩週（week 6, 7, 14, 15）
+- **意義：** 考試週前的衝刺
 ```python
-壓力 = (
-    體力不足壓力 +
-    心情不足壓力 +
-    社交不足壓力 +
-    知識不足壓力（考試週 x1.5）
-) / 4
+if week_index in [6, 7, 13, 14]:
+    if self.current_state != "AGGRESSIVE":
+        self._transition_to("AGGRESSIVE")
+    self.states["AGGRESSIVE"] = AggressivePolicy(epsilon=0.05, focus_action="study")
+
 ```
+#### AGGRESSIVE → CASUAL
+- 考試後兩週
+- **意義：** 考試週後放鬆一下，恢復狀態
+```python
+elif week_index in [9, 10]:
+    if self.current_state != "CASUAL":
+        self._transition_to("CASUAL")
+    self.states["CASUAL"] = CasualPolicy(epsilon=0.6)
+```
+
+#### CONSERVATIVE
+- 其餘時間
+- **意義：** 維持個數值的基本狀態
+```python
+else:
+    if self.current_state != "CONSERVATIVE":
+        self._transition_to("CONSERVATIVE")
+```
+
+
+
 
 ### 測試結果
 - 平均知識：97.17（次高）
