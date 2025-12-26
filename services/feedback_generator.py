@@ -45,7 +45,7 @@ def generate_weekly_advice(player, week: int) -> str:
                 f"目前屬性：心情 {player.mood}，體力 {player.energy}，社交 {player.social}，知識 {player.knowledge:.0f}\n"
                 f"累計行為（至本週）：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
                 f"本週玩家選擇為：{choice_summary}\n\n"
-                f"第一行分析玩家本週選擇的可能個性為何\n（20字以內）\n"
+                f"第一行分析玩家本週選擇的可能個性(用'{player.chname}你'代稱玩家)為何\n（20字以內）\n"
                 f"第二行簡短說明下週選擇建議(從讀書社交休息玩遊戲中選一個)，並說明原因（20字以內）。\n"
                 f" 用輕鬆、鼓勵的語氣回答，不要使用表情符號。如果心情太低或體力太低，建議多休息或玩遊戲，狀態不錯建議讀書社交之類的～\n"
             )
@@ -58,11 +58,30 @@ def generate_weekly_advice(player, week: int) -> str:
                 ],
                 temperature=0.7,
             )
-            return resp.choices[0].message.content or "(未取得建議內容)"
+            advice_text = resp.choices[0].message.content or "(未取得建議內容)"
+            # persist to player for Diary scene reuse
+            try:
+                if hasattr(player, "weekly_advice") and isinstance(player.weekly_advice, dict):
+                    player.weekly_advice[week] = advice_text
+            except Exception:
+                pass
+            return advice_text
         except Exception as e:  # graceful fallback
-            return _heuristic_advice(player, week, error=str(e))
+            fallback = _heuristic_advice(player, week, error=str(e))
+            try:
+                if hasattr(player, "weekly_advice") and isinstance(player.weekly_advice, dict):
+                    player.weekly_advice[week] = fallback
+            except Exception:
+                pass
+            return fallback
     # Fallback: no SDK or no key
-    return _heuristic_advice(player, week)
+    local = _heuristic_advice(player, week)
+    try:
+        if hasattr(player, "weekly_advice") and isinstance(player.weekly_advice, dict):
+            player.weekly_advice[week] = local
+    except Exception:
+        pass
+    return local
 
 '''
 def _heuristic_advice(player, week: int, error: str | None = None) -> str:

@@ -25,6 +25,7 @@ class Character:
             self.all_weeks_data = json.load(f)
         self.week_data = None
         self.event_history = {}  # key: week_number, value: {event_text, option_text, changes}
+        self.weekly_advice = {}
 
 
     def study(self, degree):
