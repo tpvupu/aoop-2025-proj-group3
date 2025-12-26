@@ -13,7 +13,7 @@ export OPENAI_API_KEY="your_api_key_here"
 
 ## 🌲 三種行為樹策略
 
-### 1. 保守平衡型（Conservative Policy）
+### 🛡️ 保守平衡型（Conservative Policy）
 **特性：** 維持各項數值均衡，避免任何屬性過低或過高
 
 **決策邏輯：**
@@ -48,7 +48,7 @@ return random.choice(actions)
 
 
 **參數：**
-- `epsilon = 0.1`（10% 隨機探索）
+- `epsilon = 0.1`（10% 機率隨機選擇）
 
 **適合情境：**
 - 追求穩定發展
@@ -63,8 +63,8 @@ return random.choice(actions)
 
 ---
 
-### 2. 激進極端型（AggressivePolicy）
-**特性：** 追求極致表現，長期專注單一行為
+### 🗡️ 激進極端型（AggressivePolicy）
+**特性：** 長期專注單一行為，只在數值極低（接近崩潰）時才會切換。
 
 **決策邏輯：**
 ```
