@@ -1,15 +1,19 @@
 # simulation.py
+import os
+import sys
+# Ensure project root is on sys.path so imports like `character` and `setting` work
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import numpy as np
 from character import Bubu, Yier, Mitao, Huihui
 import setting  # 用來取得資源路徑
-import os
 import random, statistics, math
 import matplotlib.pyplot as plt
 from collections import Counter
 from pathlib import Path
 from bisect import bisect_left  # ★ 用來算 percentile
 import csv
-from bvtree import (
+from test.bvtree import (
     ConservativePolicy, 
     AggressivePolicy, 
     CasualPolicy,
