@@ -83,10 +83,10 @@ class Character:
         return random.randint(int(score + 6), int(score + 10))
         
     def get_midterm(self):
-        self.midterm = round(self.calculate_grade()) + self.knowledge*0.3
+        self.midterm = int(round(self.calculate_grade()) + self.knowledge*0.2)
 
     def get_final(self):
-        self.final = round(self.calculate_grade()) -10
+        self.final = round(self.calculate_grade()) 
 
     def calculate_GPA(self):
         total_score = self.midterm * 0.40 + self.final * 0.40 + (self.knowledge) * 0.2
