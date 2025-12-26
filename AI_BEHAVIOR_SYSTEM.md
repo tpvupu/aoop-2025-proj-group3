@@ -67,16 +67,15 @@ return random.choice(actions)
 **特性：** 長期專注單一行為，只在數值極低（接近崩潰）時才會切換。
 
 **決策邏輯：**
+1. 隨機選擇一個動作作為此玩家長期專注的行為
+```python
+pid = id(player)
+if pid not in self._focus_for_player or self._focus_for_player[pid] not in actions:
+    self._focus_for_player[pid] = self.focus_action if (self.focus_action in actions) else random.choice(actions)
+# 若有外部指定的偏好，優先使用；否則隨機選一個
 ```
-優先級從高到低：
-1. 體力 < 20 或心情 < 25 → 緊急處理（極低閾值）
-2. 考試週（week 6-7, 13-14）→ 全力讀書
-3. 維持極端策略：
-   - 若 intelligence > 80 → 學霸模式（一直讀書）
-   - 若 mood < 50 → 娛樂至上（一直玩）
-   - 其他 → 隨機選一個極端行為並堅持
-4. 每 10 次行動有 5% 機會換個極端策略
-```
+2. 若預期下次執行該行為會讓任一屬性變成負數，則改為執行能提升該屬性的動作。
+
 
 **參數：**
 - `epsilon = 0.05`（5% 隨機探索，極低）
@@ -99,6 +98,20 @@ return random.choice(actions)
 **特性：** 高隨機性，跟隨直覺，沒有嚴格計劃
 
 **決策邏輯：**
+1. 高隨機性探索
+```python
+    if random.random() < self.epsilon:
+        return random.choice(actions)
+    # epsilon = 0.4（40% 隨機探索，最高）
+```
+2. 處理相對低的屬性（低於10以下）
+```python
+ if player.energy < 10 and "rest" in actions:
+            return "rest"
+        if player.mood < 10 and "play_game" in actions:
+            return "play_game"
+        if player.social < 10 and "socialize" in actions:
+            return "socialize"
 ```
 優先級從高到低：
 1. 40% 機會完全隨機（高探索率）
