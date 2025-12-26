@@ -190,9 +190,6 @@ else:
         self._transition_to("CONSERVATIVE")
 ```
 
-
-
-
 ### 測試結果
 - 平均知識：97.17（次高）
 - 心情：63.67
