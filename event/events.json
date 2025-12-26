@@ -178,7 +178,7 @@
           "A": { "text": "當然當然 W for win，期中考那個鳥樣，不退選說不過去", "attribute": "rest" },
           "B": { "text": "為了我的GPA，肯定得退選，不然又要吃B吃C，會被大家刷分刷死", "attribute": "study" },
           "C": { "text": "運氣就是我的實力哈哈，隨便考都輕鬆過", "attribute": "play_game" },
-          "D": { "text": "強者有在煩惱退選喔？不是隨便考也A+嗎？", "attribute": "social" }
+          "D": { "text": "強者有在煩惱退選喔？不是隨便考也A+嗎？", "attribute": "play_game" }
         }
       }
     
