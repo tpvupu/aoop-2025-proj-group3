@@ -119,17 +119,11 @@ if player.knowledge < week_index * 4 and "study" in actions:
             if random.random() < 0.5:
                 return "study"
 ```
-優先級從高到低：
-1. 40% 機會完全隨機（高探索率）
-2. 體力 < 25 且 70% 機率 → 休息
-3. 心情 < 30 且 80% 機率 → 玩遊戲
-4. 考試前一週 60% 機率 → 臨時抱佛腳
-5. 根據心情選擇偏好行為：
-   - 心情好（> 70）→ 偏愛社交/玩
-   - 心情差（< 40）→ 偏愛休息/玩
-   - 普通心情 → 什麼都行
-6. 加權隨機（玩遊戲 1.5x，社交 1.2x）
+4. 隨機行動
+```python
+ return random.choice(actions)
 ```
+
 
 **參數：**
 - `epsilon = 0.4`（40% 隨機探索，最高）
