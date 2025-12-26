@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+import os
+import sys
+# Ensure project root is on sys.path for imports like `character`
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 測試有限狀態機（FSM）行為策略
 展示三種不同的行為樹策略如何影響模擬結果
