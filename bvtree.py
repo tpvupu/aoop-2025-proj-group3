@@ -1,53 +1,16 @@
 import random
 import copy
 
-class BehaviorTreePolicy:
-    """
-    基礎行為樹策略（作為保守平衡型的範例）。
-    Priority (高 -> 低)：
-    1) 體力過低先休息
-    2) 心情過低先玩遊戲
-    3) 知識未達當前週目標先讀書
-    4) 社交補足
-    5) 其餘情況做一個輕度探索的隨機行動
-    """
 
-    def __init__(self, epsilon: float = 0.1) -> None:
-        self.epsilon = epsilon  # 少量隨機，避免僵化行為
-
-    def choose(self, player, actions: list[str], week_index: int) -> str:
-        # 探索：偶爾亂選，讓分佈更自然
-        if random.random() < self.epsilon:
-            return random.choice(actions)
-
-        # 1) 低體力：先休息
-        if player.energy < 35 and "rest" in actions:
-            return "rest"
-
-        # 2) 低心情：先玩遊戲提 mood
-        if player.mood < 45 and "play_game" in actions:
-            return "play_game"
-
-        # 3) 知識追目標：越接近期中/期末越想讀書
-        knowledge_target =  week_index * 5  # 簡單線性目標
-        if player.knowledge < knowledge_target and "study" in actions:
-            return "study"
-        
-        # 4) 社交補足：社交值過低時優先社交
-        if player.social < 30 and "socialize" in actions:
-            return "socialize"
-
-        # 5) 其餘：在可用行為中擇一（偏好讀書/社交）
-        preferred = [a for a in ["study", "socialize", "rest", "play_game"] if a in actions]
-        return random.choice(preferred or actions)
-
-
-class ConservativePolicy(BehaviorTreePolicy):
+class ConservativePolicy:
     """
     保守平衡型策略：維持各項數值均衡，不讓任何屬性過低或過高。
     更積極地維護各項數值在健康範圍內。
     """
     
+    def __init__(self, epsilon: float = 0.1) -> None:
+        self.epsilon = epsilon
+
     def choose(self, player, actions: list[str], week_index: int) -> str:
         # 少量隨機探索
         if random.random() < self.epsilon:
@@ -80,14 +43,14 @@ class ConservativePolicy(BehaviorTreePolicy):
         return random.choice(actions)
 
 
-class AggressivePolicy(BehaviorTreePolicy):
+class AggressivePolicy:
     """
     激進極端型策略：追求極致表現，可能長期專注於單一行為。
     只在數值極低（接近崩潰）時才會切換。
     """
     
     def __init__(self, epsilon: float = 0.05, focus_action: str = None) -> None:
-        super().__init__(epsilon)
+        self.epsilon = epsilon
         # 全域預設（僅在沒有 per-player 設定時使用）
         self.focus_action = focus_action
         # 針對每位玩家的偏好極端行為：{ id(player): action }
@@ -171,14 +134,14 @@ class AggressivePolicy(BehaviorTreePolicy):
         return focus_action
 
 
-class CasualPolicy(BehaviorTreePolicy):
+class CasualPolicy:
     """
     隨性自由型策略：更高的隨機性，偶爾跟隨直覺，沒有嚴格計劃。
     只在真的很不舒服時才會調整行為。
     """
     
     def __init__(self, epsilon: float = 0.4) -> None:
-        super().__init__(epsilon)
+        self.epsilon = epsilon
 
     def choose(self, player, actions: list[str], week_index: int) -> str:
         # 高隨機性探索
@@ -201,7 +164,6 @@ class CasualPolicy(BehaviorTreePolicy):
         # 3) 隨性選擇其他行為
         return random.choice(actions)
     
-
 
 class FSMBehaviorPolicy:
     """
@@ -226,12 +188,8 @@ class FSMBehaviorPolicy:
         self.state_history = []  # 記錄狀態轉換歷史
     
     def choose(self, player, actions: list[str], week_index: int) -> str:
-        # 強制規則：第 5、6、12、13 週一定執行讀書
-        if week_index in [5, 6, 12, 13] and "study" in actions:
-            return "study"
-
         # 依週數套用指定狀態：
-        #  - 5,6,12,13 週：AGGRESSIVE（極端讀書）
+        #  - 6,7,13,14 週：AGGRESSIVE（極端讀書）
         #  - 8,9,15,16 週：CASUAL（考後兩週，排除讀書且隨機性較高）
         #  - 其他週：CONSERVATIVE
         self._apply_week_based_state(week_index)
@@ -251,7 +209,7 @@ class FSMBehaviorPolicy:
     def _apply_week_based_state(self, week_index: int) -> None:
         """依週數直接指定狀態，符合需求規則。"""
         self.weeks_in_state += 1
-        if week_index in [5, 6, 12, 13]:
+        if week_index in [6, 7, 13, 14]:
             # 極端讀書
             if self.current_state != "AGGRESSIVE":
                 self._transition_to("AGGRESSIVE")

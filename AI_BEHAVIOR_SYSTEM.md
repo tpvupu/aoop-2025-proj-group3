@@ -13,20 +13,42 @@ export OPENAI_API_KEY="your_api_key_here"
 
 ## 🌲 三種行為樹策略
 
-### 1. 保守平衡型（ConservativePolicy）
+### 🛡️ 保守平衡型（Conservative Policy）
 **特性：** 維持各項數值均衡，避免任何屬性過低或過高
 
 **決策邏輯：**
-```
 優先級從高到低：
-1. 任一屬性 < 40 → 緊急補救
-2. 屬性 < 55 且偏離最大 → 次要補救
-3. 知識未達目標（溫和） → 讀書
+1. 任一屬性 < 35 → 緊急補救
+```python
+if player.energy < 35 and "rest" in actions:
+            return "rest"
+        if player.social < 35 and "socialize" in actions:
+            return "socialize"
+        if player.mood < 35 and "play_game" in actions:
+            return "play_game"
+```
+2. 知識未達目標 (週數*5) → 讀書
+```python
+if player.knowledge < week_index * 5 and "study" in actions:
+            return "study"
+```
+3. 處理相對低的屬性（低於平均值2以上）
+```python
+if player.energy < average_attribute - 2 and "rest" in actions:
+            return "rest"
+        if player.mood < average_attribute - 2 and "play_game" in actions:
+            return "play_game"
+        if player.social < average_attribute - 2 and "socialize" in actions:
+            return "socialize"
+```
 4. 均衡狀態 → 隨機行為
+```python
+return random.choice(actions)
 ```
 
+
 **參數：**
-- `epsilon = 0.1`（10% 隨機探索）
+- `epsilon = 0.1`（10% 機率隨機選擇）
 
 **適合情境：**
 - 追求穩定發展
@@ -41,8 +63,8 @@ export OPENAI_API_KEY="your_api_key_here"
 
 ---
 
-### 2. 激進極端型（AggressivePolicy）
-**特性：** 追求極致表現，長期專注單一行為
+### 🗡️ 激進極端型（AggressivePolicy）
+**特性：** 長期專注單一行為，只在數值極低（接近崩潰）時才會切換。
 
 **決策邏輯：**
 ```
