@@ -19,7 +19,7 @@ export OPENAI_API_KEY="your_api_key_here"
 **決策邏輯：**
 優先級從高到低：
 1. 任一屬性 < 35 → 緊急補救
-'''
+'''python
 if player.energy < 35 and "rest" in actions:
             return "rest"
         if player.social < 35 and "socialize" in actions:
