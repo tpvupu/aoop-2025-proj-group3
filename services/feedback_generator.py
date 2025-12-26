@@ -32,6 +32,10 @@ def generate_weekly_advice(player, week: int) -> str:
         try:
             client = OpenAI(api_key=api_key)
             counts = _summarize_actions(player, until_week=week)
+            entry = player.event_history.get(week, {})
+            event_text = entry.get("event_text", "")
+            option_text = entry.get("option_text", "")
+            choice_summary = option_text or event_text or "（本週無事件紀錄）"
             
             prompt = (
                 f"你是玩家的學習顧問。根據以下資訊給予本週建議：\n\n"
@@ -40,7 +44,10 @@ def generate_weekly_advice(player, week: int) -> str:
                 f"第 {week} 週\n"
                 f"目前屬性：心情 {player.mood}，體力 {player.energy}，社交 {player.social}，知識 {player.knowledge:.0f}\n"
                 f"累計行為（至本週）：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
-                f"請給予簡短的建議的下週選擇建議(從讀書社交休息玩遊戲中選)，並說明原因（20字以內）。"
+                f"本週玩家選擇為：{choice_summary}\n\n"
+                f"第一行分析玩家本週選擇的可能個性為何\n（20字以內）\n"
+                f"第二行簡短說明下週選擇建議(從讀書社交休息玩遊戲中選一個)，並說明原因（20字以內）。\n"
+                f" 用輕鬆、鼓勵的語氣回答，不要使用表情符號。如果心情太低或體力太低，建議多休息或玩遊戲，狀態不錯建議讀書社交之類的～\n"
             )
             
             resp = client.chat.completions.create(
