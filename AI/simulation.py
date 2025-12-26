@@ -13,7 +13,7 @@ from collections import Counter
 from pathlib import Path
 from bisect import bisect_left  # ★ 用來算 percentile
 import csv
-from test.bvtree import (
+from AI.bvtree import (
     ConservativePolicy, 
     AggressivePolicy, 
     CasualPolicy,
