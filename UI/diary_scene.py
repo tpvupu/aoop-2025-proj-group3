@@ -21,9 +21,18 @@ class DiaryScene(BaseScene):
         self.btn_back = ImageButton("resource/image/back.png", (90, 20), size=(100, 100))
         # Advice toggle
         self.advice_text = None
+        # reference player's persisted weekly advice
+        self.advice_by_week = self.player.weekly_advice
         self.advice_font = pygame.font.Font(setting.JFONT_PATH_Light, 28)
         self.advice_hint = pygame.font.Font(setting.JFONT_PATH_REGULAR, 24).render("按 A 生成本週建議", True, (60, 60, 60))
         self.advice_hint_rect = self.advice_hint.get_rect(topleft=(160, 680))
+
+        # if there is prior advice for the current week, display it immediately
+        if self.player.event_history:
+            sorted_weeks = sorted(self.player.event_history.keys())
+            if 0 <= self.week_index < len(sorted_weeks):
+                cur_week = sorted_weeks[self.week_index]
+                self.advice_text = self.advice_by_week.get(cur_week)
 
     def draw(self):
         
@@ -32,7 +41,7 @@ class DiaryScene(BaseScene):
 
         if self.player.event_history:
             sorted_weeks = sorted(self.player.event_history.keys())
-            if self.week_index <= len(sorted_weeks):
+            if 0 <= self.week_index < len(sorted_weeks):
                 week = sorted_weeks[self.week_index]
                 entry = self.player.event_history.get(week)
                 event_text = entry.get("event_text", "")
@@ -49,6 +58,12 @@ class DiaryScene(BaseScene):
                             content += f"{attr} +{value}  "
                         elif value < 0:
                             content += f"{attr} {value}  "
+                    content += (
+                        f"\n本週狀態：心情 {self.player.mood}  "
+                        f"體力 {self.player.energy}  "
+                        f"社交 {self.player.social}  "
+                        f"知識 {self.player.knowledge:.0f}"
+                    )
                 draw_wrapped_text(self.screen, content, self.font, self.text_rect, (50,30,30),48)
         # Advice block
         if self.advice_text:
@@ -78,9 +93,15 @@ class DiaryScene(BaseScene):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.btn_left.rect.collidepoint(event.pos):
                         self.week_index = max(0, self.week_index - 1)
+                        sorted_weeks = sorted(self.player.event_history.keys())
+                        prev_week = sorted_weeks[self.week_index] if sorted_weeks else None
+                        self.advice_text = self.advice_by_week.get(prev_week)
                         self.animator = self.player.gif_choose(self.week_index+1, (850, 450), (200, 200))
                     elif self.btn_right.rect.collidepoint(event.pos):
                         self.week_index = min(self.total_weeks - 1, self.week_index + 1)
+                        sorted_weeks = sorted(self.player.event_history.keys())
+                        next_week = sorted_weeks[self.week_index] if sorted_weeks else None
+                        self.advice_text = self.advice_by_week.get(next_week)
                         self.animator = self.player.gif_choose(self.week_index+1, (850, 450), (200, 200))
                     elif self.btn_back.rect.collidepoint(event.pos):
                         return "BACK"
@@ -91,7 +112,10 @@ class DiaryScene(BaseScene):
                         sorted_weeks = sorted(self.player.event_history.keys())
                         if 0 <= self.week_index < len(sorted_weeks):
                             week = sorted_weeks[self.week_index]
-                            self.advice_text = generate_weekly_advice(self.player, week)
+                            advice = generate_weekly_advice(self.player, week)
+                            # stored in player by generator, keep local view in sync
+                            self.advice_by_week[week] = advice
+                            self.advice_text = advice
                     except Exception as _:
                         self.advice_text = "(產生建議失敗，請稍後再試或檢查網路/API 設定)"
         return None

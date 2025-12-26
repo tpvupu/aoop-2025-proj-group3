@@ -25,13 +25,15 @@ class Character:
             self.all_weeks_data = json.load(f)
         self.week_data = None
         self.event_history = {}  # key: week_number, value: {event_text, option_text, changes}
+        self.weekly_advice = {}
 
 
     def study(self, degree):
         growth = int(
-            self.intelligence * 0.16 +
-            self.mood * 0.05 +
-            self.energy * 0.08 )
+            self.intelligence * 0.1 +
+            self.mood * 0.06 +
+            self.social * 0.06 +
+            self.energy * 0.06 )
         growth = round(growth/(1+((8 - self.week_number) * 0.1)),2) if self.week_number < 8 else round(growth/(1+((16 - self.week_number) * 0.1)),2)
         self.last_week_change = [-int(growth*0.8), -int(growth*0.2), -int(growth*0.2), growth+1]
         self.last_week_change = [int(grow * degree) for grow in self.last_week_change] 
@@ -86,7 +88,7 @@ class Character:
         self.midterm = int(round(self.calculate_grade()) + self.knowledge*0.2)
 
     def get_final(self):
-        self.final = round(self.calculate_grade())-10
+        self.final = round(self.calculate_grade())-5
 
     def calculate_GPA(self):
         total_score = self.midterm * 0.40 + self.final * 0.40 + (self.knowledge) * 0.2
