@@ -9,11 +9,11 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 
 from simulation import Simulation
-from bvtree import ConservativePolicy
+from bvtree import *
 
 if __name__ == "__main__":
     print("開始執行模擬...")
-    policy = ConservativePolicy(epsilon=0.1)
+    policy = FSMBehaviorPolicy()
     sim = Simulation(n_players=300, policy=policy)
     sim.run()
     print("模擬完成！\n")

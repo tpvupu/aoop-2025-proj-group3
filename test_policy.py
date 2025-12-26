@@ -244,6 +244,7 @@ def compare_policies_by_character(n_players: int = 300):
         "Conservative": ConservativePolicy(epsilon=0.1),
         "Aggressive": AggressivePolicy(epsilon=0.05),
         "Casual": CasualPolicy(epsilon=0.4),
+        "FSM": FSMBehaviorPolicy()
     }
 
     # 結果收集：{character: {policy: stats}}

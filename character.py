@@ -30,9 +30,9 @@ class Character:
 
     def study(self, degree):
         growth = int(
-            self.intelligence * 0.1 +
+            self.intelligence * 0.14 +
             self.mood * 0.06 +
-            self.social * 0.06 +
+            self.social * 0.04 +
             self.energy * 0.06 )
         growth = round(growth/(1+((8 - self.week_number) * 0.1)),2) if self.week_number < 8 else round(growth/(1+((16 - self.week_number) * 0.1)),2)
         self.last_week_change = [-int(growth*0.8), -int(growth*0.2), -int(growth*0.2), growth+1]
@@ -46,7 +46,7 @@ class Character:
 
     def socialize(self, degree):
         growth = int((100-self.social) * 0.25)
-        self.last_week_change = [ int(growth*0.2), -int(growth*0.2), growth, int(growth*0.2)]
+        self.last_week_change = [ int(growth*0.2), -int(growth*0.2), growth, 1]
         self.last_week_change = [int(grow * degree) for grow in self.last_week_change] 
         
         self.mood , self.energy , self.social, self.knowledge = \
@@ -85,14 +85,14 @@ class Character:
         return random.randint(int(score + 6), int(score + 10))
         
     def get_midterm(self):
-        self.midterm = int(round(self.calculate_grade()) + self.knowledge*0.2)
+        self.midterm = int(round(self.calculate_grade()) + self.knowledge*0.25)
 
     def get_final(self):
         self.final = round(self.calculate_grade())-5
 
     def calculate_GPA(self):
         total_score = self.midterm * 0.40 + self.final * 0.40 + (self.knowledge) * 0.2
-        total_score = max(0, int(math.sqrt(total_score) * 15 - 50))#適當調分
+        total_score = max(0, int(math.sqrt(total_score) * 15.5 - 55))#適當調分
         self.total_score = total_score
         gpa = []
         for _ in range(8):
