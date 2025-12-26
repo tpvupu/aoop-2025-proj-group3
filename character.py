@@ -46,7 +46,7 @@ class Character:
 
     def socialize(self, degree):
         growth = int((100-self.social) * 0.25)
-        self.last_week_change = [ int(growth*0.2), -int(growth*0.2), growth, 1]
+        self.last_week_change = [ int(growth*0.2), -int(growth*0.2), growth, int(growth*0.2)]
         self.last_week_change = [int(grow * degree) for grow in self.last_week_change] 
         
         self.mood , self.energy , self.social, self.knowledge = \
