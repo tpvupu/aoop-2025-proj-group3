@@ -36,17 +36,23 @@ def generate_weekly_advice(player, week: int) -> str:
             event_text = entry.get("event_text", "")
             option_text = entry.get("option_text", "")
             choice_summary = option_text + " " + event_text 
+            if player.week_number == 8:
+                choice_summary += "（期中考週）,期中分數為 " + str(player.midterm)
+            if player.week_number == 16:
+                choice_summary += "（期末考週）,期末分數為 " + str(player.final)
             
             prompt = (
-                f"你是玩家的學習顧問。根據以下資訊給予本週建議：\n\n"
+                f"你是玩家的損友。根據以下資訊給予本週建議：\n\n"
                 f"【玩家資料】\n"
                 f"角色：{player.chname}（{player.name}）\n"
                 f"第 {week} 週\n"
                 f"目前屬性：心情 {player.mood}，體力 {player.energy}，社交 {player.social}，知識 {player.knowledge:.0f}\n"
                 f"累計行為（至本週）：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
                 f"本週玩家選擇為：{choice_summary}\n\n"
-                f"第一行分析玩家本週選擇的可能個性(用'{player.chname}你'代稱玩家)為何\n（20字以內）\n"
+                f"第一行分析玩家本週選擇的可能個性(以'{player.chname}你可能...'開頭)為何\n（20字以內）少一點冒險者\n"
                 f"第二行給玩家一點回覆，盡量有趣或有梗一點（主要參照本週劇情與玩家選擇,20字以內）\n"
+                f"如果是期中期末週給考後建議與回覆。\n"
+                f"選項中的偷卷是指偷偷讀書的意思，考古大食怪是指一直跟學長姐要考古的\n"
             )
             
             resp = client.chat.completions.create(
