@@ -27,9 +27,24 @@ if player.energy < 35 and "rest" in actions:
         if player.mood < 35 and "play_game" in actions:
             return "play_game"
 ```
-2. 屬性 < 55 且偏離最大 → 次要補救
-3. 知識未達目標（溫和） → 讀書
+2. 知識未達目標 (週數*5) → 讀書
+```python
+if player.knowledge < week_index * 5 and "study" in actions:
+            return "study"
+```
+3. 處理相對低的屬性（低於平均值2以上）
+```python
+if player.energy < average_attribute - 2 and "rest" in actions:
+            return "rest"
+        if player.mood < average_attribute - 2 and "play_game" in actions:
+            return "play_game"
+        if player.social < average_attribute - 2 and "socialize" in actions:
+            return "socialize"
+```
 4. 均衡狀態 → 隨機行為
+```python
+return random.choice(actions)
+```
 
 
 **參數：**
