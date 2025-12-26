@@ -19,14 +19,14 @@ export OPENAI_API_KEY="your_api_key_here"
 **決策邏輯：**
 優先級從高到低：
 1. 任一屬性 < 35 → 緊急補救
-'''python
+```python
 if player.energy < 35 and "rest" in actions:
             return "rest"
         if player.social < 35 and "socialize" in actions:
             return "socialize"
         if player.mood < 35 and "play_game" in actions:
             return "play_game"
-'''
+```
 2. 屬性 < 55 且偏離最大 → 次要補救
 3. 知識未達目標（溫和） → 讀書
 4. 均衡狀態 → 隨機行為
