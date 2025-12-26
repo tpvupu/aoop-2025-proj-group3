@@ -49,6 +49,12 @@ class DiaryScene(BaseScene):
                             content += f"{attr} +{value}  "
                         elif value < 0:
                             content += f"{attr} {value}  "
+                    content += (
+                        f"\n本週狀態：心情 {self.player.mood}  "
+                        f"體力 {self.player.energy}  "
+                        f"社交 {self.player.social}  "
+                        f"知識 {self.player.knowledge:.0f}"
+                    )
                 draw_wrapped_text(self.screen, content, self.font, self.text_rect, (50,30,30),48)
         # Advice block
         if self.advice_text:

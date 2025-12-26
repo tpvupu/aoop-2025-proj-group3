@@ -23,7 +23,7 @@ def _summarize_actions(player, until_week: int) -> Dict[str, Any]:
     counts["total"] = sum(counts.values())
     return counts
 
-'''
+
 def generate_weekly_advice(player, week: int) -> str:
     """Generate weekly advice using OpenAI API if available; fallback to heuristic text."""
     # Prefer OpenAI if SDK and key exist
@@ -31,13 +31,25 @@ def generate_weekly_advice(player, week: int) -> str:
     if OpenAI and api_key:
         try:
             client = OpenAI(api_key=api_key)
-            prompt = _build_prompt(player, week)
+            counts = _summarize_actions(player, until_week=week)
+            
+            prompt = (
+                f"你是玩家的學習顧問。根據以下資訊給予本週建議：\n\n"
+                f"【玩家資料】\n"
+                f"角色：{player.chname}（{player.name}）\n"
+                f"第 {week} 週\n"
+                f"目前屬性：心情 {player.mood}，體力 {player.energy}，社交 {player.social}，知識 {player.knowledge:.0f}\n"
+                f"累計行為（至本週）：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
+                f"請給予簡短的建議的下週選擇建議(從讀書社交休息玩遊戲中選)，並說明原因（20字以內）。"
+            )
+            
             resp = client.chat.completions.create(
-                model="gpt-4.1-mini",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "你是一個專業的學習與心理顧問。"},
                     {"role": "user", "content": prompt},
                 ],
+                temperature=0.7,
             )
             return resp.choices[0].message.content or "(未取得建議內容)"
         except Exception as e:  # graceful fallback
@@ -90,7 +102,7 @@ def _heuristic_advice(player, week: int, error: str | None = None) -> str:
         parts.append(f"(提示：AI 服務不可用，改用在地建議；{error})")
 
     return "\n\n".join(parts)
-
+'''
 
 def generate_final_advice(player) -> str:
     """Generate end-of-game summary advice (uses OpenAI if available)."""
