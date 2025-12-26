@@ -8,20 +8,7 @@ except Exception:  # pragma: no cover
     OpenAI = None
 
 
-def _summarize_actions(player, until_week: int) -> Dict[str, Any]:
-    """Aggregate the player's choices up to a specific week.
 
-    Returns a dict like:
-    {"study": n, "rest": n, "socialize": n, "play_game": n, "total": n}
-    """
-    counts = {"study": 0, "rest": 0, "socialize": 0, "play_game": 0}
-    # player.chosen is a 17-length list with action strings per week index
-    for week_idx in range(1, min(until_week + 1, len(player.chosen))):
-        act = player.chosen[week_idx]
-        if act in counts:
-            counts[act] += 1
-    counts["total"] = sum(counts.values())
-    return counts
 
 
 def generate_weekly_advice(player, week: int) -> str:
@@ -31,7 +18,7 @@ def generate_weekly_advice(player, week: int) -> str:
     if OpenAI and api_key:
         try:
             client = OpenAI(api_key=api_key)
-            counts = _summarize_actions(player, until_week=week)
+            
             entry = player.event_history.get(week, {})
             event_text = entry.get("event_text", "")
             option_text = entry.get("option_text", "")
@@ -42,23 +29,22 @@ def generate_weekly_advice(player, week: int) -> str:
                 choice_summary += "（期末考週）,期末分數為 " + str(player.final)
             
             prompt = (
-                f"你是玩家的損友。根據以下資訊給予本週建議：\n\n"
+                f"你是玩家的朋友。請用大學生的語氣給建議：\n\n"
                 f"【玩家資料】\n"
                 f"角色：{player.chname}（{player.name}）\n"
                 f"第 {week} 週\n"
                 f"目前屬性：心情 {player.mood}，體力 {player.energy}，社交 {player.social}，知識 {player.knowledge:.0f}\n"
-                f"累計行為（至本週）：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
                 f"本週玩家選擇為：{choice_summary}\n\n"
-                f"第一行分析玩家本週選擇的可能個性(以'{player.chname}你可能...'開頭)為何\n（20字以內）少一點冒險者\n"
-                f"第二行給玩家一點回覆，盡量有趣或有梗一點（主要參照本週劇情與玩家選擇,20字以內）\n"
+                f"第一行分析玩家本週選擇的可能個性(以'{player.chname}你可能...'開頭)為何\n（20字以內）\n"
+                f"第二行給玩家一點回覆，盡量有趣帶點調侃（主要參照本週劇情與玩家選擇,20字以內）\n"
                 f"如果是期中期末週給考後建議與回覆。\n"
-                f"選項中的偷卷是指偷偷讀書的意思，考古大食怪是指一直跟學長姐要考古的\n"
+                f"選項中的偷卷是指偷偷讀書的意思，考古大食怪是指一直跟學長姐要考古的，不要一直用冒險者形容\n"
             )
             
             resp = client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "你是一個專業的學習與心理顧問。"},
+                    {"role": "system", "content": "你是玩家的大學同學。"},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.7,
@@ -138,7 +124,6 @@ def _heuristic_advice(player, week: int, error: str | None = None) -> str:
 def generate_final_advice(player) -> str:
     """Generate end-of-game summary advice (uses OpenAI if available)."""
     api_key = os.environ.get("OPENAI_API_KEY", "")
-    counts = _summarize_actions(player, until_week=min(player.week_number, 16))
 
     if OpenAI and api_key:
         try:
@@ -170,7 +155,6 @@ def generate_final_advice(player) -> str:
                 f"角色：{player.chname}（{player.name}）\n"
                 f"最終成績：GPA {player.GPA:.2f}，期中 {player.midterm} 分，期末 {player.final} 分，總分 {player.total_score}\n"
                 f"最終屬性：心情 {player.mood}，體力 {player.energy}，社交 {player.social}，知識 {player.knowledge:.0f}\n"
-                f"累計行為：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
                 f"【整學期事件選擇】\n{event_summary_text}\n\n"
                 f"【愛情線事件】\n{love_summary_text}\n\n"
                 f"請輸出以下三個部分：\n\n"
