@@ -224,24 +224,7 @@ class FSMBehaviorPolicy:
         else:
             if self.current_state != "CONSERVATIVE":
                 self._transition_to("CONSERVATIVE")
-    
-    def _calculate_stress(self, player, week_index: int) -> float:
-        """計算當前壓力程度 (0-1)"""
-        # 各項數值不足造成的壓力
-        energy_stress = max(0, (40 - player.energy) / 40)
-        mood_stress = max(0, (40 - player.mood) / 40)
-        social_stress = max(0, (30 - player.social) / 30)
-        
-        # 知識不足的壓力（考試週加重）
-        knowledge_target = 30 + week_index * 2
-        knowledge_stress = max(0, (knowledge_target - player.knowledge) / knowledge_target)
-        if week_index in [7, 8, 14, 15]:
-            knowledge_stress *= 1.5
-        
-        # 綜合壓力
-        total_stress = (energy_stress + mood_stress + social_stress + knowledge_stress) / 4
-        return min(1.0, total_stress)
-    
+   
     def _transition_to(self, new_state: str) -> None:
         """切換到新狀態"""
         if new_state != self.current_state:
@@ -257,10 +240,4 @@ class FSMBehaviorPolicy:
             if new_state == "AGGRESSIVE":
                 self.states["AGGRESSIVE"] = AggressivePolicy(epsilon=0.05, focus_action="study")
     
-    def get_state_stats(self) -> dict:
-        """取得狀態統計資訊"""
-        return {
-            'current_state': self.current_state,
-            'weeks_in_current': self.weeks_in_state,
-            'transition_history': self.state_history
-        }
+    

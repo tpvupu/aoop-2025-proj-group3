@@ -67,16 +67,15 @@ return random.choice(actions)
 **特性：** 長期專注單一行為，只在數值極低（接近崩潰）時才會切換。
 
 **決策邏輯：**
+1. 隨機選擇一個動作作為此玩家長期專注的行為
+```python
+pid = id(player)
+if pid not in self._focus_for_player or self._focus_for_player[pid] not in actions:
+    self._focus_for_player[pid] = self.focus_action if (self.focus_action in actions) else random.choice(actions)
+# 若有外部指定的偏好，優先使用；否則隨機選一個
 ```
-優先級從高到低：
-1. 體力 < 20 或心情 < 25 → 緊急處理（極低閾值）
-2. 考試週（week 6-7, 13-14）→ 全力讀書
-3. 維持極端策略：
-   - 若 intelligence > 80 → 學霸模式（一直讀書）
-   - 若 mood < 50 → 娛樂至上（一直玩）
-   - 其他 → 隨機選一個極端行為並堅持
-4. 每 10 次行動有 5% 機會換個極端策略
-```
+2. 若預期下次執行該行為會讓任一屬性變成負數，則改為執行能提升該屬性的動作。
+
 
 **參數：**
 - `epsilon = 0.05`（5% 隨機探索，極低）
@@ -99,18 +98,32 @@ return random.choice(actions)
 **特性：** 高隨機性，跟隨直覺，沒有嚴格計劃
 
 **決策邏輯：**
+1. 高隨機性探索(不根據此策略行動)
+```python
+    if random.random() < self.epsilon:
+        return random.choice(actions)
+    # epsilon = 0.4（40% 隨機探索，最高）
 ```
-優先級從高到低：
-1. 40% 機會完全隨機（高探索率）
-2. 體力 < 25 且 70% 機率 → 休息
-3. 心情 < 30 且 80% 機率 → 玩遊戲
-4. 考試前一週 60% 機率 → 臨時抱佛腳
-5. 根據心情選擇偏好行為：
-   - 心情好（> 70）→ 偏愛社交/玩
-   - 心情差（< 40）→ 偏愛休息/玩
-   - 普通心情 → 什麼都行
-6. 加權隨機（玩遊戲 1.5x，社交 1.2x）
+2. 處理相對低的屬性（低於10以下）
+```python
+ if player.energy < 10 and "rest" in actions:
+            return "rest"
+        if player.mood < 10 and "play_game" in actions:
+            return "play_game"
+        if player.social < 10 and "socialize" in actions:
+            return "socialize"
 ```
+3.  讀書是「可有可無」而且是隨機的，知識未達目標 (週數*5) → 概率性讀書
+```python
+if player.knowledge < week_index * 4 and "study" in actions:
+            if random.random() < 0.5:
+                return "study"
+```
+4. 隨機行動
+```python
+ return random.choice(actions)
+```
+
 
 **參數：**
 - `epsilon = 0.4`（40% 隨機探索，最高）
@@ -149,44 +162,32 @@ CONSERVATIVE ←───────→ AGGRESSIVE
 ### 狀態轉換條件
 
 #### CONSERVATIVE → AGGRESSIVE
-- 考試週（week 6, 7, 13, 14）且知識 < 40
-- **意義：** 發現考試快到了但知識不足，開始緊張讀書
-
-#### CONSERVATIVE → CASUAL
-- 壓力指數 < 0.3 且待在保守狀態 > 2 週
-- 30% 機率觸發
-- **意義：** 狀態良好，放鬆一下
-
-#### AGGRESSIVE → CONSERVATIVE
-- 壓力指數 > 0.7（任一屬性過低）
-- **意義：** 太拼了導致身心崩潰，需要恢復平衡
-
-#### AGGRESSIVE → CASUAL
-- 考試結束週（week 8, 9, 15, 16）
-- 40% 機率觸發
-- **意義：** 考完試了，放鬆慶祝
-
-#### CASUAL → CONSERVATIVE
-- 壓力指數 > 0.6（狀態失衡）
-- **意義：** 玩太多了，發現狀態不對勁
-
-#### CASUAL → AGGRESSIVE
-- 考前週（week 5, 6, 12, 13）
-- 25% 機率觸發
-- **意義：** 突然覺醒，想要認真一下
-
-#### CASUAL 內部轉換
-- 待超過 4 週且 20% 機率
-- **意義：** 隨性的人可能突然換心情
-
-### 壓力指數計算
+- 考試前兩週（week 6, 7, 14, 15）
+- **意義：** 考試週前的衝刺
 ```python
-壓力 = (
-    體力不足壓力 +
-    心情不足壓力 +
-    社交不足壓力 +
-    知識不足壓力（考試週 x1.5）
-) / 4
+if week_index in [6, 7, 13, 14]:
+    if self.current_state != "AGGRESSIVE":
+        self._transition_to("AGGRESSIVE")
+    self.states["AGGRESSIVE"] = AggressivePolicy(epsilon=0.05, focus_action="study")
+
+```
+#### AGGRESSIVE → CASUAL
+- 考試後兩週
+- **意義：** 考試週後放鬆一下，恢復狀態
+```python
+elif week_index in [9, 10]:
+    if self.current_state != "CASUAL":
+        self._transition_to("CASUAL")
+    self.states["CASUAL"] = CasualPolicy(epsilon=0.6)
+```
+
+#### CONSERVATIVE
+- 其餘時間
+- **意義：** 維持個數值的基本狀態
+```python
+else:
+    if self.current_state != "CONSERVATIVE":
+        self._transition_to("CONSERVATIVE")
 ```
 
 ### 測試結果
