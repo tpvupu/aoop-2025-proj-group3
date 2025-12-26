@@ -226,49 +226,46 @@ class FSMBehaviorPolicy:
         self.state_history = []  # 記錄狀態轉換歷史
     
     def choose(self, player, actions: list[str], week_index: int) -> str:
-        # 每週更新一次狀態（在新的一週開始時檢查是否要切換）
-        self._update_state(player, week_index)
-        
-        # 使用當前狀態的策略來選擇行為
+        # 強制規則：第 5、6、12、13 週一定執行讀書
+        if week_index in [5, 6, 12, 13] and "study" in actions:
+            return "study"
+
+        # 依週數套用指定狀態：
+        #  - 5,6,12,13 週：AGGRESSIVE（極端讀書）
+        #  - 8,9,15,16 週：CASUAL（考後兩週，排除讀書且隨機性較高）
+        #  - 其他週：CONSERVATIVE
+        self._apply_week_based_state(week_index)
+
+        # 考後兩週的 CASUAL：排除 study 並提高隨機性
+        effective_actions = actions
+        if self.current_state == "CASUAL" and week_index in [8, 9, 15, 16]:
+            filtered = [a for a in actions if a != "study"]
+            effective_actions = filtered or actions  # 以免動作集被清空
+            # 確保 CASUAL 在這兩週的隨機性較高
+            self.states["CASUAL"] = CasualPolicy(epsilon=0.6)
+
+        # 使用當前狀態策略決策
         current_policy = self.states[self.current_state]
-        return current_policy.choose(player, actions, week_index)
+        return current_policy.choose(player, effective_actions, week_index)
     
-    def _update_state(self, player, week_index: int) -> None:
-        """根據玩家狀態和週數決定是否切換策略"""
+    def _apply_week_based_state(self, week_index: int) -> None:
+        """依週數直接指定狀態，符合需求規則。"""
         self.weeks_in_state += 1
-        
-        # 計算當前壓力指數
-        stress_level = self._calculate_stress(player, week_index)
-        
-        # 狀態轉換邏輯
-        if self.current_state == "CONSERVATIVE":
-            # 保守型 -> 激進型：考試週來臨且知識不足
-            if week_index in [6, 7, 13, 14] and player.knowledge < 40:
+        if week_index in [5, 6, 12, 13]:
+            # 極端讀書
+            if self.current_state != "AGGRESSIVE":
                 self._transition_to("AGGRESSIVE")
-            # 保守型 -> 隨性型：狀態良好且壓力低
-            elif stress_level < 0.3 and self.weeks_in_state > 2:
-                if random.random() < 0.3:
-                    self._transition_to("CASUAL")
-        
-        elif self.current_state == "AGGRESSIVE":
-            # 激進型 -> 保守型：壓力過大（任一屬性過低）
-            if stress_level > 0.7:
-                self._transition_to("CONSERVATIVE")
-            # 激進型 -> 隨性型：考試結束，放鬆一下
-            elif week_index in [8, 9, 15, 16] and random.random() < 0.4:
+            # 確保激進策略為讀書偏好
+            self.states["AGGRESSIVE"] = AggressivePolicy(epsilon=0.05, focus_action="study")
+        elif week_index in [8, 9, 15, 16]:
+            # 考後兩週：隨性，且排除讀書（在 choose 時處理）
+            if self.current_state != "CASUAL":
                 self._transition_to("CASUAL")
-        
-        elif self.current_state == "CASUAL":
-            # 隨性型 -> 保守型：發現狀態失衡
-            if stress_level > 0.6:
+            # 提高隨機性
+            self.states["CASUAL"] = CasualPolicy(epsilon=0.6)
+        else:
+            if self.current_state != "CONSERVATIVE":
                 self._transition_to("CONSERVATIVE")
-            # 隨性型 -> 激進型：考前突然想認真
-            elif week_index in [5, 6, 12, 13] and random.random() < 0.25:
-                self._transition_to("AGGRESSIVE")
-            # 隨性型內部：待太久了可能換心情
-            elif self.weeks_in_state > 4 and random.random() < 0.2:
-                new_state = random.choice(["CONSERVATIVE", "AGGRESSIVE"])
-                self._transition_to(new_state)
     
     def _calculate_stress(self, player, week_index: int) -> float:
         """計算當前壓力程度 (0-1)"""

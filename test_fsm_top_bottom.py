@@ -9,7 +9,6 @@
 from bvtree import FSMBehaviorPolicy
 from character import Bubu, Yier, Mitao, Huihui
 import random
-import statistics
 
 ACTIONS = ["study", "rest", "play_game", "socialize"]
 
@@ -64,7 +63,6 @@ def simulate_player_with_weekly_logs(player_cls) -> dict:
         'gpa': player.GPA,
         'midterm': player.midterm,
         'final': player.final,
-        'total_score': player.total_score,
         'weekly': weekly,
         'actions': actions,
     }
@@ -88,7 +86,7 @@ def run_fsm_top_bottom(n_players: int = 300):
     # 取 GPA Top3 與 Bottom3
     sorted_res = sorted(results, key=lambda r: r['gpa'])
     bottom3 = sorted_res[:3]
-    top3 = sorted_res[-3:][::-1]
+    top3 = list(reversed(sorted_res[-3:]))
 
     def print_player_detail(tag: str, r: dict):
         print(f"\n{tag} 角色: {r['character']} | GPA: {r['gpa']:.2f} | 期中: {r['midterm']:.1f} | 期末: {r['final']:.1f}")

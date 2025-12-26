@@ -86,7 +86,7 @@ class Character:
         self.midterm = int(round(self.calculate_grade()) + self.knowledge*0.2)
 
     def get_final(self):
-        self.final = round(self.calculate_grade()) 
+        self.final = round(self.calculate_grade())-10
 
     def calculate_GPA(self):
         total_score = self.midterm * 0.40 + self.final * 0.40 + (self.knowledge) * 0.2
