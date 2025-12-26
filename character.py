@@ -21,7 +21,8 @@ class Character:
         self.chosen = ['0']*17
         self.home = ""
         self.last_week_change = [0,0,0,0]  # [心情, 體力, 社交, 知識]
-        with open("event/events.json", "r", encoding="utf-8") as f:
+        # Use absolute path from setting to avoid CWD issues in tests
+        with open(setting.EVENTS_JSON_PATH, "r", encoding="utf-8") as f:
             self.all_weeks_data = json.load(f)
         self.week_data = None
         self.event_history = {}  # key: week_number, value: {event_text, option_text, changes}
