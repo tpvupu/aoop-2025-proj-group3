@@ -105,7 +105,8 @@ class AggressivePolicy(BehaviorTreePolicy):
         # 依玩家設定或初始化偏好極端行為（首次隨機選一個）
         pid = id(player)
         if pid not in self._focus_for_player or self._focus_for_player[pid] not in actions:
-            self._focus_for_player[pid] = random.choice(actions)
+            # 若有外部指定的偏好，優先使用；否則隨機選一個
+            self._focus_for_player[pid] = self.focus_action if (self.focus_action in actions) else random.choice(actions)
 
         # 預測執行單一行為後是否會讓屬性為負
         def would_cause_negative(action_name: str):
@@ -207,7 +208,7 @@ class FSMBehaviorPolicy:
     有限狀態機策略：在三種行為樹之間切換。
     狀態：
     - CONSERVATIVE: 保守平衡型
-    - AGGRESSIVE: 激進極端型
+    - AGGRESSIVE: 激進極端型(讀書模式)
     - CASUAL: 隨性自由型
     
     轉換條件基於角色當前狀態和週數。
@@ -297,9 +298,9 @@ class FSMBehaviorPolicy:
             self.current_state = new_state
             self.weeks_in_state = 0
             
-            # 如果切換到激進型，重置其內部狀態
+            # 如果切換到激進型，指定為讀書型態的極端偏好
             if new_state == "AGGRESSIVE":
-                self.states["AGGRESSIVE"] = AggressivePolicy(epsilon=0.05)
+                self.states["AGGRESSIVE"] = AggressivePolicy(epsilon=0.05, focus_action="study")
     
     def get_state_stats(self) -> dict:
         """取得狀態統計資訊"""
