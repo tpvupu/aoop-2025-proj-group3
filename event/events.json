@@ -9,7 +9,7 @@
           "A": {"text": "答應他一起去吃飯", "attribute": "social"},
           "B": {"text": "婉拒，跟更熟的人有約了", "attribute": "play_game"},
           "C": {"text": "婉拒，吃啥飯（OS: 趁你吃飯，我偷捲）", "attribute": "study"},
-          "D": {"text": "答應，「好阿～要不要一起叫外送？」", "attribute": "rest"}
+          "D": {"text": "答應，「好阿～要不要一起叫外送？」", "attribute": "social"}
         }
       }
   },
