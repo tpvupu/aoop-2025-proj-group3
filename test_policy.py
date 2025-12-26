@@ -41,11 +41,12 @@ def test_single_policy(policy, policy_name, n_players=300):
     print("✓")
     
     print(f"正在生成圖表... ", end='', flush=True)
-    sim.plot_midterm_final()
-    sim.plot_total()
-    sim.plot_gpa()
+    title_suffix = f" ({policy_name})"
+    sim.plot_midterm_final(title_add=title_suffix)
+    sim.plot_total(title_add=title_suffix)
+    sim.plot_gpa(title_add=title_suffix)
     sim.export_gpa_csv()
-    print("✓")
+    print(f"✓ (標題: {title_suffix})")
     
     # 顯示統計結果
     print(f"\n📈 統計結果:")
@@ -319,19 +320,19 @@ if __name__ == "__main__":
     # 1. 測試保守型策略
     conservative_result = test_single_policy(
         ConservativePolicy(epsilon=0.1), 
-        "保守平衡型"
+        "Conservative Policy"
     )
     
     # 2. 測試激進型策略
     aggressive_result = test_single_policy(
         AggressivePolicy(epsilon=0.05), 
-        "激進極端型"
+        "Aggressive Policy"
     )
     
     # 3. 測試隨性型策略
     casual_result = test_single_policy(
         CasualPolicy(epsilon=0.4), 
-        "隨性自由型"
+        "Casual Policy"
     )
     
     # 4. 測試 FSM 策略（含詳細追蹤）
