@@ -10,7 +10,6 @@ from pathlib import Path
 from bisect import bisect_left  # ★ 用來算 percentile
 import csv
 from bvtree import (
-    BehaviorTreePolicy, 
     ConservativePolicy, 
     AggressivePolicy, 
     CasualPolicy,
@@ -484,7 +483,7 @@ class Simulation:
 # 範例呼叫
 # -------------------------------
 if __name__ == "__main__":
-    policy = BehaviorTreePolicy(epsilon=0.1)
+    policy = ConservativePolicy(epsilon=0.1)
     sim = Simulation(policy=policy)
     sim.run_and_plot_all()
 
