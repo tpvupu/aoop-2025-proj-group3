@@ -35,7 +35,7 @@ def generate_weekly_advice(player, week: int) -> str:
             entry = player.event_history.get(week, {})
             event_text = entry.get("event_text", "")
             option_text = entry.get("option_text", "")
-            choice_summary = option_text or event_text or "（本週無事件紀錄）"
+            choice_summary = option_text + " " + event_text 
             
             prompt = (
                 f"你是玩家的學習顧問。根據以下資訊給予本週建議：\n\n"
@@ -46,8 +46,7 @@ def generate_weekly_advice(player, week: int) -> str:
                 f"累計行為（至本週）：讀書 {counts['study']} 次、休息 {counts['rest']} 次、社交 {counts['socialize']} 次、玩遊戲 {counts['play_game']} 次\n\n"
                 f"本週玩家選擇為：{choice_summary}\n\n"
                 f"第一行分析玩家本週選擇的可能個性(用'{player.chname}你'代稱玩家)為何\n（20字以內）\n"
-                f"第二行簡短說明下週選擇建議(從讀書社交休息玩遊戲中選一個)，並說明原因（20字以內）。\n"
-                f" 用輕鬆、鼓勵的語氣回答，不要使用表情符號。如果心情太低或體力太低，建議多休息或玩遊戲，狀態不錯建議讀書社交之類的～\n"
+                f"第二行給玩家一點回覆，盡量有趣或有梗一點（主要參照本週劇情與玩家選擇,20字以內）\n"
             )
             
             resp = client.chat.completions.create(
