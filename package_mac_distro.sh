@@ -46,8 +46,9 @@ Lazy Me Today Too 使用說明（macOS）
 1) 開啟方式：
    - 在 Finder 中前往此資料夾，右鍵（或按住 control）點擊 LazyMeTodayToo.app，選「打開」，
      再次彈出警告時按「打開」。這是因為未簽名開發者的 Gatekeeper 限制。
-   - 若仍被阻擋，可在終端機執行：
-       xattr -cr LazyMeTodayToo.app
+   - 若仍被阻擋，打開終端機執行：
+      cd "下載後的資料夾路徑“
+      xattr -cr LazyMeTodayToo.app
 
 2) OpenAI API（選用）：
    - 若要使用 AI 建議功能，請將 .env.example 複製為 .env，並填入您的 API Key：
