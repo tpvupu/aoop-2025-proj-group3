@@ -4,7 +4,27 @@
 from PIL import Image
 import os
 
-def gif_to_img(source_gif):
+
+def remove_background(frame, tolerance=8):
+    """Remove a solid background by keying out the top-left pixel color."""
+    rgba = frame.convert("RGBA")
+    pixels = rgba.load()
+    width, height = rgba.size
+    bg = pixels[0, 0]
+
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = pixels[x, y]
+            if (
+                abs(r - bg[0]) <= tolerance
+                and abs(g - bg[1]) <= tolerance
+                and abs(b - bg[2]) <= tolerance
+            ):
+                pixels[x, y] = (r, g, b, 0)
+    return rgba
+
+
+def gif_to_img(source_gif, remove_bg=True):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     TARGET_GIF = os.path.join(current_dir, source_gif)
 
@@ -18,7 +38,10 @@ def gif_to_img(source_gif):
     try:
         while True:
             gif.seek(frame_count)
-            gif.save(os.path.join(frames_dir, f"frame_{frame_count}.png"))
+            frame = gif.convert("RGBA")
+            if remove_bg:
+                frame = remove_background(frame)
+            frame.save(os.path.join(frames_dir, f"frame_{frame_count}.png"))
             frame_count += 1
     except EOFError:
         print(f"✅ {source_gif} 共分解 {frame_count} 張 frames，已存到資料夾：{frames_dir}")

@@ -1,6 +1,7 @@
 import pygame
 import os
 import json
+import random
 from UI.components.character_animator import CharacterAnimator
 from UI.components.button import Button
 from UI.components.audio_manager import AudioManager
@@ -90,6 +91,18 @@ class MainScene(BaseScene):
         self.diary_icon = pygame.transform.smoothscale(self.diary_icon, (90, 90))
         self.diary_rect = self.diary_icon.get_rect(topleft=(980, 15))
         self.diary_hover = False
+
+        # 角色動畫互動
+        self.character_rect = self.animator.get_rect()
+        self.base_anim_folder = getattr(self.animator, "folder_path", None)
+        self.active_anim_paths = [
+            getattr(self.player, "active1", None),
+            getattr(self.player, "active2", None),
+            getattr(self.player, "active3", None),
+        ]
+        self.current_anim_level = 0
+        self.last_anim_click_time = 0
+        self.anim_click_timeout = 2000  # 2秒後回到基礎動畫
 
     def draw_emoji(self):
         self.emoji_rects = []
@@ -221,6 +234,36 @@ class MainScene(BaseScene):
             text2_rect = text2.get_rect(topleft=(x_right + 60, 140))
             self.screen.blit(text2, text2_rect)
 
+    def _switch_anim_level(self, level):
+        if level == self.current_anim_level:
+            return
+        target = self.base_anim_folder if level == 0 else self.active_anim_paths[level - 1]
+        if not target:
+            return
+        self.animator.switch_animation(target)
+        self.current_anim_level = level
+
+    def handle_character_click(self, mouse_pos):
+        if not self.character_rect.collidepoint(mouse_pos):
+            return
+
+        # 找出所有可用的 active 動畫
+        available_anims = [i + 1 for i, path in enumerate(self.active_anim_paths) if path]
+        
+        if not available_anims:
+            return
+        
+        # 隨機選擇一個可用動畫
+        level = random.choice(available_anims)
+        self.last_anim_click_time = pygame.time.get_ticks()
+        self._switch_anim_level(level)
+
+    def _reset_animation_if_idle(self, now):
+        if self.current_anim_level == 0:
+            return
+        if now - self.last_anim_click_time > self.anim_click_timeout:
+            self._switch_anim_level(0)
+
         
     def draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -283,8 +326,13 @@ class MainScene(BaseScene):
     def update(self):
         
         self.animator.update()    
+        self.character_rect.topleft = self.animator.position
+        self.character_rect.size = self.animator.size
+
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = pygame.mouse.get_pressed()
+        now = pygame.time.get_ticks()
+        self._reset_animation_if_idle(now)
 
         for emoji in self.floating_emojis:
             emoji.update()
@@ -338,6 +386,8 @@ class MainScene(BaseScene):
 
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = event.pos
+
+                    self.handle_character_click(mouse_pos)
 
                     # 點擊設定按鈕
                     if self.set_rect.collidepoint(mouse_pos):
