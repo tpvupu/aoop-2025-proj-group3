@@ -8,7 +8,7 @@ from typing import Dict, Any
 # DEFAULT_OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxx"
 # 
 # 注意：如果您要分享程式碼，請不要提交真實的 API Key！
-# ==========================================
+
 
 # 嘗試載入 .env 檔案（如果存在）
 try:
