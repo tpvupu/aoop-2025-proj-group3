@@ -2,62 +2,37 @@
 
 ## 快速開始
 
-### 在 macOS 上打包（生成 .app 文件）
+### macOS（.app）
 
-1. **安裝依賴**
-   ```bash
-   pip install -r requirements.txt
-   pip install pyinstaller
-   ```
-
-2. **執行打包**
-   ```bash
-   chmod +x build.sh
-   ./build.sh
-   ```
-
-3. **運行應用程式**
-   - 打包完成後，在 `dist/` 資料夾中會生成 `LazyMeTodayToo.app`
-   - 雙擊即可執行
-
----
-
-## 在 Windows 上打包（生成 .exe 文件）
-
-如果您需要 Windows 版本的 exe 文件，需要在 Windows 環境中執行：
-
-### 方法一：使用 Windows 電腦
-
-1. **安裝 Python 和依賴**
-   ```cmd
-   pip install -r requirements.txt
-   pip install pyinstaller
-   ```
-
-2. **修改 build.spec**
-   - 移除或註解掉最後的 `BUNDLE` 部分（僅用於 macOS）
-   - 確保 `console=False` 以隱藏命令提示字元視窗
-
-3. **執行打包**
-   ```cmd
-   pyinstaller build.spec
-   ```
-
-4. **結果**
-   - 在 `dist/LazyMeTodayToo/` 資料夾中會有可執行文件
-   - 整個資料夾都需要一起發布
-
-### 方法二：使用單一 exe 文件
-
-如果想要打包成單一 exe 文件（較慢但更方便發布）：
-
+1) 安裝依賴
 ```bash
-pyinstaller --onefile --windowed \
-  --add-data "resource:resource" \
-  --add-data "event/events.json:event" \
-  --add-data "AI:AI" \
-  --name LazyMeTodayToo \
-  main.py
+pip install -r requirements.txt
+chmod +x build.sh
+./build.sh
+```
+
+2) 產物
+- `dist/LazyMeTodayToo.app`
+- 需要 OpenAI 時，放 `.env` 於 `dist/`：`OPENAI_API_KEY=sk-...`
+
+### Windows（.exe，請在 Windows 環境執行）
+
+1) 安裝依賴
+```cmd
+pip install -r requirements.txt
+pip install pyinstaller
+```
+
+2) 打包
+```cmd
+pyinstaller build.spec
+```
+
+3) 產物
+- `dist/LazyMeTodayToo/` 內有執行檔，整個資料夾一起發布
+- 如需單檔：
+```cmd
+pyinstaller --onefile --windowed --icon resource/image/Mitao_head.ico build.spec
 ```
 
 ---
@@ -92,19 +67,8 @@ xattr -cr dist/LazyMeTodayToo.app
 
 ### 添加圖示
 
-1. 準備圖示文件：
-   - macOS: `.icns` 格式
-   - Windows: `.ico` 格式
-
-2. 修改 `build.spec`：
-   ```python
-   exe = EXE(
-       ...
-       icon='path/to/icon.icns',  # macOS
-       # icon='path/to/icon.ico',  # Windows
-       ...
-   )
-   ```
+- macOS：使用 `resource/image/Mitao_head.png`，`build.sh` 會自動轉出 `Mitao_head.icns` 並套用
+- Windows：放置 `resource/image/Mitao_head.ico`，`build.spec` 會自動帶入；若缺少則使用預設圖示
 
 ### 優化打包大小
 

@@ -2,12 +2,13 @@ import os
 from typing import Dict, Any
 
 # ==========================================
-# 🔑 懶人設定：直接在這裡填入您的 API Key
+# Lazy option: embed your OpenAI API Key
 # ==========================================
-# 將下面的空字串替換成您的 OpenAI API Key，例如：
+# Replace the empty string with your OpenAI API Key, e.g.:
 # DEFAULT_OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxx"
-# 
-# 注意：如果您要分享程式碼，請不要提交真實的 API Key！
+# Note: do NOT commit a real key to git or share builds with it embedded.
+DEFAULT_OPENAI_API_KEY = ""
+# ==========================================
 # 嘗試載入 .env 檔案（如果存在）
 try:
     if os.path.exists('.env'):
