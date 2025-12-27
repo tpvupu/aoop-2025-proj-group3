@@ -4,6 +4,7 @@ import os
 class CharacterAnimator:
     
     def __init__(self, folder_path, position, size):
+        self.folder_path = folder_path
         self.position = position  # (x, y)
         self.size = size          # (width, height)
         self.frames = []
@@ -33,6 +34,9 @@ class CharacterAnimator:
         if self.frames:
             screen.blit(self.frames[self.current_frame], self.position)
 
+    def get_rect(self):
+        return pygame.Rect(self.position, self.size)
+
 
     def reset(self):
         self.current_frame = 0
@@ -40,6 +44,7 @@ class CharacterAnimator:
         self.frame_count = len(self.frames)
 
     def switch_animation(self, new_folder_path):
+        self.folder_path = new_folder_path
         self.frames = []
         for filename in sorted(os.listdir(new_folder_path), key=lambda x: int(x.split('_')[1].split('.')[0])):
             if filename.endswith(".png"):
