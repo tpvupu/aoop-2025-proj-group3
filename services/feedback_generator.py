@@ -1,6 +1,28 @@
 import os
 from typing import Dict, Any
 
+# ==========================================
+# 🔑 懶人設定：直接在這裡填入您的 API Key
+# ==========================================
+# 將下面的空字串替換成您的 OpenAI API Key，例如：
+# DEFAULT_OPENAI_API_KEY = "sk-proj-xxxxxxxxxxxxxxxx"
+# 
+# 注意：如果您要分享程式碼，請不要提交真實的 API Key！
+# ==========================================
+
+# 嘗試載入 .env 檔案（如果存在）
+try:
+    if os.path.exists('.env'):
+        with open('.env', 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key.strip()] = value.strip()
+except Exception:
+    pass
+
+
 try:
     # OpenAI Python SDK (as used in test.py)
     from openai import OpenAI  # type: ignore
@@ -14,7 +36,7 @@ except Exception:  # pragma: no cover
 def generate_weekly_advice(player, week: int) -> str:
     """Generate weekly advice using OpenAI API if available; fallback to heuristic text."""
     # Prefer OpenAI if SDK and key exist
-    api_key = os.environ.get("OPENAI_API_KEY", "")
+    api_key = os.environ.get("OPENAI_API_KEY", "") or DEFAULT_OPENAI_API_KEY
     if OpenAI and api_key:
         try:
             client = OpenAI(api_key=api_key)
@@ -123,7 +145,7 @@ def _heuristic_advice(player, week: int, error: str | None = None) -> str:
 
 def generate_final_advice(player) -> str:
     """Generate end-of-game summary advice (uses OpenAI if available)."""
-    api_key = os.environ.get("OPENAI_API_KEY", "")
+    api_key = os.environ.get("OPENAI_API_KEY", "") or DEFAULT_OPENAI_API_KEY
 
     if OpenAI and api_key:
         try:
