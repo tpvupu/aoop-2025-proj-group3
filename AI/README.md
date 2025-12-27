@@ -55,12 +55,6 @@ return random.choice(actions)
 - 不想冒險，保守型人格
 - 各項屬性都不能太差
 
-**測試結果：**
-- 平均知識：77.07
-- 心情：94.87（最高）
-- 體力：55.85（最高）
-- 穩定性：中等（標準差 9.5）
-
 ---
 
 ### 🗡️ 激進極端型（AggressivePolicy）
@@ -147,15 +141,10 @@ if pid not in self._focus_for_player or self._focus_for_player[pid] not in actio
 - 接受犧牲其他屬性
 - 有明確目標的積極型人格
 
-**測試結果：**
-- 平均知識：100.00（最高，滿分）
-- 心情：27.14（最低）
-- 體力：26.90（最低）
-- 穩定性：最高（標準差 0.0）
 
 ---
 
-### 3. 隨性自由型（CasualPolicy）
+### 💭 隨性自由型（CasualPolicy）
 **特性：** 高隨機性，跟隨直覺，沒有嚴格計劃
 
 **決策邏輯：**
@@ -194,20 +183,15 @@ if player.knowledge < week_index * 4 and "study" in actions:
 - 看心情做事
 - 自由散漫型人格
 
-**測試結果：**
-- 平均知識：93.75
-- 心情：71.13
-- 體力：46.21
-- 穩定性：最低（標準差 12.0）
 
 ---
 
-## 🔄 有限狀態機（FSMBehaviorPolicy）
+### ⏰ 有限狀態機（FSMBehaviorPolicy）
 
-### 核心概念
+#### 核心概念
 FSM 會在三種行為樹之間**動態切換**，根據玩家當前狀態和週數自動調整策略。
 
-### 狀態轉換圖
+#### 狀態轉換圖
 ```
          壓力低 & 狀態良好
     ┌───────────────────────┐
@@ -220,7 +204,7 @@ CONSERVATIVE ←───────→ AGGRESSIVE
               (隨性自由)
 ```
 
-### 狀態轉換條件
+#### 狀態轉換條件
 
 #### CONSERVATIVE → AGGRESSIVE
 - 考試前兩週（week 6, 7, 14, 15）
@@ -250,13 +234,14 @@ else:
     if self.current_state != "CONSERVATIVE":
         self._transition_to("CONSERVATIVE")
 ```
+ **特點：** 平衡了知識與身心健康
 
-### 測試結果
-- 平均知識：97.17（次高）
-- 心情：63.67
-- 體力：34.67
-- 穩定性：中等（標準差 7.4）
-- **特點：** 平衡了知識與身心健康
+**適合情境** 
+- 具有明確學習節奏
+- 習慣以「階段目標」規劃學習與生活
+- 考前能夠高度專注的學生
+
+
 
 ---
 
@@ -280,179 +265,3 @@ FSM            82.90   88.70   95.19    4.13    0.08
    有限狀態機: 動態調整，平衡成績與身心狀態，最推薦
 
 ---
-
-## 🧪 模擬結果總結與討論
-
-以下討論基於最新一次全量測試（各策略模擬 300 名玩家，`test_fsm_policy.py` 輸出）：
-
-- **GPA 最高**：保守平衡型（4.02）。雖然知識不突出，但心情、體力兩項拉高總分，顯示評分權重對「身心」敏感。若最終評分更偏知識，可調整 `calculate_GPA()` 權重。
-- **知識最高**：激進極端型（知識 99.86）。代價是心情、體力皆低（~27），長期可能不適合，需要在遊戲敘事上強調「透支」感。
-- **平衡最推薦**：有限狀態機（GPA 3.92，知識 94.55，標準差中等 0.22）。能自動切換，維持不錯的知識，同時避免身心崩盤，是預設玩家體驗的優選。
-- **體驗最自在**：隨性自由型（心情 71.13，體力 46.21，知識 82.11）。波動最大（標準差 0.25），但更貼近「看心情」的隨機路徑，適合想要故事感的跑局。
-- **體力與心情最佳**：保守平衡型（心情 94.87，體力 55.85），但知識最低（77.07）。可作為「養生流」或新手保護策略。
-
-### 觀察重點
-- **權重影響**：目前 GPA 計算讓高心情/體力也能推高總分，導致保守型拿到最高 GPA；若要讓「讀書」更有價值，可提高知識權重或降低身心加分。
-- **考週衝刺**：激進型與 FSM 在考試週前後的行為差異明顯；FSM 會在壓力高時切到激進，在考後轉回隨性或保守，行為更自然。
-- **隨機性與穩定度**：隨性型標準差最大，適合多樣劇情；激進型標準差最小，行為可預測但體驗單調。
-- **敘事搭配**：可以把各策略包裝成「性格」選項，讓玩家理解取捨：
-    - 激進：成績衝刺但壓力山大
-    - 保守：身心健康但成績平平
-    - 隨性：看心情，劇情豐富
-    - FSM：聰明適應，整體平衡
-
-### 建議的後續調整
-1) **平衡評分**：若想讓激進型的身心代價更明顯，可在 `calculate_GPA` 增加對低心情/體力的懲罰，或在極低值時施加 debuff。
-2) **事件互動**：在考前若知識不足，觸發提醒事件；考後若心情低，給放鬆事件，讓 FSM 切換更「有戲」。
-3) **可視化**：在圖表標註 Top% 與均值，並展示各策略的標準差，用來對比穩定度。
-4) **玩家可選人格**：開局允許玩家選擇策略或 FSM 初始狀態；中途可用道具短暫切到激進或保守。
-
----
-
-## 💻 使用方式
-
-### 1. 基本使用（在 simulation.py 中）
-```python
-from simulation import Simulation
-from bvtree import ConservativePolicy, AggressivePolicy, CasualPolicy, FSMBehaviorPolicy
-
-# 使用保守型策略
-sim = Simulation(n_players=300, policy=ConservativePolicy())
-sim.run()
-
-# 使用 FSM（推薦）
-sim = Simulation(n_players=300, policy=FSMBehaviorPolicy())
-sim.run_and_plot_all()
-```
-
-### 2. 自訂初始狀態
-```python
-# FSM 從激進型開始
-fsm = FSMBehaviorPolicy(initial_state="AGGRESSIVE")
-
-# 激進型專注於讀書
-aggressive = AggressivePolicy(focus_action="study")
-```
-
-### 3. 調整隨機性
-```python
-# 更保守（5% 隨機）
-conservative = ConservativePolicy(epsilon=0.05)
-
-# 更隨性（60% 隨機）
-casual = CasualPolicy(epsilon=0.6)
-```
-
-### 4. 測試策略
-```bash
-# 簡單測試（不需要 pygame）
-python3 test_simple_fsm.py
-
-# 完整測試（需要完整環境）
-python3 test_fsm_policy.py
-```
-
----
-
-## 🎯 策略選擇建議
-
-### 追求最高成績 → **激進極端型**
-- 知識 100 分
-- 但心情和體力會很低
-- 適合短期衝刺
-
-### 平衡發展 → **有限狀態機（FSM）**
-- 知識 97 分（次高）
-- 身心狀態中等
-- 會根據情況自動調整
-- **最推薦**
-
-### 享受過程 → **隨性自由型**
-- 知識 93 分
-- 心情體力較好
-- 每次體驗都不同
-
-### 穩定安全 → **保守平衡型**
-- 知識 77 分
-- 心情體力最好
-- 適合不想冒險的玩家
-
----
-
-## 🛠️ 技術細節
-
-### 文件結構
-```
-bvtree.py               # 行為樹策略實作
-├── BehaviorTreePolicy      # 基礎行為樹
-├── ConservativePolicy      # 保守型
-├── AggressivePolicy        # 激進型
-├── CasualPolicy            # 隨性型
-└── FSMBehaviorPolicy       # 有限狀態機
-
-simulation.py           # 模擬系統
-└── Simulation
-    └── policy: BehaviorTreePolicy  # 可注入任意策略
-
-test_simple_fsm.py      # 測試腳本
-```
-
-### 擴展方式
-如果想新增自己的策略：
-
-```python
-from bvtree import BehaviorTreePolicy
-
-class MyCustomPolicy(BehaviorTreePolicy):
-    def choose(self, player, actions, week_index):
-        # 你的決策邏輯
-        if player.knowledge < 50:
-            return "study"
-        elif player.mood < 50:
-            return "play_game"
-        # ...
-        return random.choice(actions)
-
-# 使用
-sim = Simulation(policy=MyCustomPolicy())
-```
-
----
-
-## 📈 實際應用場景
-
-1. **遊戲 NPC AI：** 可用於模擬不同性格的 NPC 行為
-2. **教育模擬：** 研究不同學習策略的效果
-3. **決策系統：** 為玩家提供 AI 建議
-4. **數據分析：** 生成不同策略的統計數據
-
----
-
-## 🎓 學習要點
-
-### 行為樹優點
-- ✅ 容易理解和調整
-- ✅ 模組化，每個策略獨立
-- ✅ 可預測性高
-
-### 有限狀態機優點
-- ✅ 動態適應環境變化
-- ✅ 狀態清晰，易於追蹤
-- ✅ 適合複雜決策場景
-
-### 混合系統優點
-- ✅ 結合兩者優點
-- ✅ FSM 管理大局，行為樹處理細節
-- ✅ 靈活且強大
-
----
-
-## 📝 總結
-
-這個 AI 系統展示了如何用**簡單的規則**創造出**複雜的行為模式**。三種行為樹代表三種人格，FSM 則讓 AI 能夠根據情境「改變性格」，更接近真實人類的決策過程。
-
-**最大亮點：** FSM 不是單純切換策略，而是根據「壓力」、「週數」、「狀態」等多維度因素智能決策，展現出類似人類「考試前緊張、考後放鬆」的自然行為。
-
----
-
-*最後更新：2025-12-24*
