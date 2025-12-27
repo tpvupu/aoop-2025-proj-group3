@@ -1,11 +1,5 @@
 # ✨AOOP Final Project 2025
 
-🌟🌟🌟預計優化項目：
-1. 優化程式碼改善遊戲效能
-2. 調整各數值及成績的計算方式
-3. 利用AI模擬出各個角色的最佳選擇策略
-
-
 ###  Lazy Me Today Too 今天的我也想耍廢😎 ——— 模擬人生大學版
 
 GIF 素材來源：\
@@ -161,8 +155,10 @@ oop-2025-proj-group10/
     python main.py
     ```
 ---
-
-
+本專案另增加AI的即時回覆系統，玩家需在terminal引入OpenAI Key，指令如下 :
+```
+export OPENAI_API_KEY="your_api_key_here"
+```
 
 # About Our Docker 🚀
 **除了上述的虛擬環境，也可以使用我們建置的 Docker ~**
