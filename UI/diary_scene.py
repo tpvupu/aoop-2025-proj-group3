@@ -7,7 +7,7 @@ class DiaryScene(BaseScene):
     def __init__(self, screen, player):
         super().__init__(screen)
         self.player = player
-        self.diary_img = pygame.image.load("resource/image/diary_image.png").convert_alpha()
+        self.diary_img = pygame.image.load(setting.ImagePath.DIARY_IMG_PATH).convert_alpha()
         self.diary_img = pygame.transform.smoothscale(self.diary_img, (1200, 1100))
         self.diary_rect = self.diary_img.get_rect(center=(610, 450))
         self.text_rect = pygame.Rect(150, 60, 900, 600)
@@ -16,9 +16,9 @@ class DiaryScene(BaseScene):
         self.week_index = self.player.week_number - 1
         self.animator = self.player.gif_choose(self.week_index+1,(850, 450), (200, 200))
         self.total_weeks = len(self.player.event_history)
-        self.btn_left = ImageButton("resource/image/left.png", (100, 700), size=(80, 80))
-        self.btn_right = ImageButton("resource/image/right.png", (980, 700), size=(80, 80))
-        self.btn_back = ImageButton("resource/image/back.png", (90, 20), size=(100, 100))
+        self.btn_left = ImageButton(setting.ImagePath.LEFT_PATH, (100, 700), size=(80, 80))
+        self.btn_right = ImageButton(setting.ImagePath.RIGHT_PATH, (980, 700), size=(80, 80))
+        self.btn_back = ImageButton(setting.ImagePath.BACK_PATH, (90, 20), size=(100, 100))
         # Advice toggle
         self.advice_text = None
         # reference player's persisted weekly advice

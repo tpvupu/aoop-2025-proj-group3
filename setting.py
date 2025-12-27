@@ -54,6 +54,8 @@ class SoundEffect:
 # Image 路徑
 class ImagePath:
     BACK_PATH = os.path.join(IMAGE_DIR, 'back.png')
+    LEFT_PATH = os.path.join(IMAGE_DIR, 'left.png')
+    RIGHT_PATH = os.path.join(IMAGE_DIR, 'right.png')
     BACKGROUND_PATH = os.path.join(IMAGE_DIR, 'background_intro.png')
     BUTTON_PATH = os.path.join(IMAGE_DIR, 'button.png')
     SET_PAGE_PATH = os.path.join(IMAGE_DIR, 'set_page.png')

@@ -44,10 +44,11 @@ class RankScene(BaseScene):
         # 圖片載入與縮放
         # 全角色圖表
         self.all_images = []
+        import os
         all_image_paths = [
-            setting.GPA_HIGHLIGHT_PATH,
-            setting.TOTAL_SCORE_HIGHLIGHT_PATH,
-            setting.MIDTERM_FINAL_HIGHLIGHT_PATH,
+            os.path.join(setting.SIMULATION_PLOTS_DIR, 'gpa_highlight.png'),
+            os.path.join(setting.SIMULATION_PLOTS_DIR, 'total_highlight.png'),
+            os.path.join(setting.SIMULATION_PLOTS_DIR, 'midterm_final_highlight.png'),
         ]
         for path in all_image_paths:
             img = pygame.image.load(path).convert_alpha()
