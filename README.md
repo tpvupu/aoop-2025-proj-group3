@@ -83,7 +83,7 @@ export OPENAI_API_KEY="your_api_key_here"
 
 ## 📂 專案架構 (Project Structure)
 ``` bash
-oop-2025-proj-group10/
+aoop-2025-proj-group3/
 │
 ├── main.py                      # 主程式入口，負責遊戲流程控制
 ├── character.py                 # 角色類別與屬性、行為邏輯
