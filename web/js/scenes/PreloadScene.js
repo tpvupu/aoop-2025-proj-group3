@@ -106,11 +106,25 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('mitao_head', 'assets/images/Mitao_head.png');
         this.load.image('huihui_head', 'assets/images/Huihui_head.png');
         
-        // 載入情感表情
+        // 載入表情符號 (白底版本用於按鈕)
+        this.load.image('emoji_happy_w', 'assets/images/happy_white.png');
+        this.load.image('emoji_sad_w', 'assets/images/sad_white.png');
+        this.load.image('emoji_angry_w', 'assets/images/angry_white.png');
+        this.load.image('emoji_heart_w', 'assets/images/heart_white.png');
+        this.load.image('emoji_kiss_w', 'assets/images/kiss_white.png');
+        this.load.image('emoji_hehe_w', 'assets/images/hehe_white.png');
+        this.load.image('emoji_lightening_w', 'assets/images/lightening_white.png');
+        this.load.image('emoji_rocket_w', 'assets/images/rocket_white.png');
+        
+        // 載入表情符號 (彩色版本用於飄浮動畫)
         this.load.image('emoji_happy', 'assets/images/happy.png');
         this.load.image('emoji_sad', 'assets/images/sad.png');
         this.load.image('emoji_angry', 'assets/images/angry.png');
         this.load.image('emoji_heart', 'assets/images/heart.png');
+        this.load.image('emoji_kiss', 'assets/images/kiss.png');
+        this.load.image('emoji_hehe', 'assets/images/hehe.png');
+        this.load.image('emoji_lightening', 'assets/images/lightening.png');
+        this.load.image('emoji_rocket', 'assets/images/rocket.png');
         
         // 載入按鈕和 UI
         this.load.image('notebook', 'assets/images/notebook.png');
@@ -139,6 +153,12 @@ class PreloadScene extends Phaser.Scene {
         for (let i = 0; i < 4; i++) {
             this.load.image(`four_char_${i}`, `assets/gifs/four_char_frames/frame_${i}.png`);
             this.load.image(`four_char2_${i}`, `assets/gifs/four_char2_frames/frame_${i}.png`);
+        }
+        
+        // 載入介紹場景的 yier_play_game 動畫
+        // 假設 yier_play_game_frames 有 8 幀
+        for (let i = 0; i < 8; i++) {
+            this.load.image(`yier_play_game_${i}`, `assets/gifs/yier_play_game_frames/frame_${i}.png`);
         }
     }
     

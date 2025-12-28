@@ -268,7 +268,8 @@ class CharacterSelectScene extends Phaser.Scene {
             duration: 500,
             onComplete: () => {
                 this.time.delayedCall(1000, () => {
-                    this.scene.start('StoryScene');
+                    // 根據 Pygame 配置，選擇角色後進入 MainScene
+                    this.scene.start('MainScene');
                 });
             }
         });
