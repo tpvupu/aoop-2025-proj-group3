@@ -226,7 +226,7 @@ class CharacterSelectScene extends Phaser.Scene {
                 });
             })
             .on('pointerdown', () => {
-                this.selectCharacter(characterData);
+                this.selectCharacter(characterData, charKey);
             });
         
         return cardData;
@@ -242,9 +242,9 @@ class CharacterSelectScene extends Phaser.Scene {
     }
     
     
-    selectCharacter(characterData) {
+    selectCharacter(characterData, charKey) {
         // 設置選擇的角色
-        window.GameState.setPlayer(characterData);
+        window.GameState.setPlayer(characterData, charKey);
         
         // 顯示確認動畫
         const width = this.cameras.main.width;
