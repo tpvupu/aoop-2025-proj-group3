@@ -43,35 +43,36 @@ class CharacterSelectScene extends Phaser.Scene {
         );
         title.setOrigin(0.5, 0);
         
-        // 卡片配置 - 模仿 Pygame 版本的四角位置
-        const cardWidth = 420;
-        const cardHeight = 280;
-        const margin = 30;
-        const verticalMargin = 50;
+        // 卡片配置 - 根據 Pygame 版本的比例設置
+        // Pygame: 屏幕 1200x800, 卡片 500x300, margin 30
+        const cardWidth = width * (500 / 1200);      // 41.67% of width
+        const cardHeight = height * (300 / 800);     // 37.5% of height
+        const marginX = width * (30 / 1200);         // 2.5% of width
+        const marginY = height * (30 / 800);         // 3.75% of height
         
         const cardConfigs = [
             {
                 charKey: 'bubu',
-                x: margin + cardWidth / 2,
-                y: verticalMargin + cardHeight / 2,
+                x: marginX + cardWidth / 2,
+                y: marginY + cardHeight / 2,
                 description: "大家好～我是布布！\n我喜歡在網路上盡情地打遊戲！\n希望這學期所有的課都可以過"
             },
             {
                 charKey: 'yier',
-                x: width - margin - cardWidth / 2,
-                y: verticalMargin + cardHeight / 2,
+                x: width - marginX - cardWidth / 2,
+                y: marginY + cardHeight / 2,
                 description: "大家好～我是一二！\n我熱衷於系上活動以及社團～\n認識好多學長姐嘿嘿～"
             },
             {
                 charKey: 'mitao',
-                x: margin + cardWidth / 2,
-                y: height - verticalMargin - cardHeight / 2,
+                x: marginX + cardWidth / 2,
+                y: height - marginY - cardHeight / 2,
                 description: "大家好～我是蜜桃！\n嗚嗚嗚這學期不小心選太多課...\n現在實在是捲不動了～"
             },
             {
                 charKey: 'huihui',
-                x: width - margin - cardWidth / 2,
-                y: height - verticalMargin - cardHeight / 2,
+                x: width - marginX - cardWidth / 2,
+                y: height - marginY - cardHeight / 2,
                 description: "大家好～我是灰灰！\n我正在追求自己真正想做的事！\n重要的是追尋我的快樂貓生！"
             }
         ];
@@ -126,28 +127,28 @@ class CharacterSelectScene extends Phaser.Scene {
         
         // 左上角：描述文字
         const descText = this.add.text(
-            -cardWidth / 2 + 15,
-            -cardHeight / 2 + 15,
+            -cardWidth / 2 + 20,
+            -cardHeight / 2 + 20,
             description,
             {
-                fontSize: '14px',
-                fill: '#666666',
-                fontFamily: 'Arial, sans-serif',
-                wordWrap: { width: cardWidth - 160 },
-                lineSpacing: 5
+                fontSize: '28px',
+                fill: '#646464',
+                fontFamily: 'JasonHandwriting3, Arial, sans-serif',
+                wordWrap: { width: cardWidth - 180 },
+                lineSpacing: 8
             }
         );
         descText.setOrigin(0, 0);
         
         // 左下角：角色名稱
         const nameText = this.add.text(
-            -cardWidth / 2 + 15,
-            cardHeight / 2 - 35,
+            -cardWidth / 2 + 20,
+            cardHeight / 2 - 40,
             characterData.name,
             {
-                fontSize: '24px',
-                fill: '#333333',
-                fontFamily: 'Arial, sans-serif',
+                fontSize: '36px',
+                fill: '#323232',
+                fontFamily: 'JasonHandwriting3, Arial, sans-serif',
                 fontStyle: 'bold'
             }
         );
@@ -155,12 +156,12 @@ class CharacterSelectScene extends Phaser.Scene {
         
         // 右下角：角色動畫
         const animImage = this.add.image(
-            cardWidth / 2 - 50,
-            cardHeight / 2 - 40,
+            cardWidth / 2 - 70,
+            cardHeight / 2 - 50,
             `${charKey}_intro_0`
         );
-        // 調整動畫圖片大小和位置
-        animImage.setScale(0.35);
+        // 調整動畫圖片大小和位置 - 約 140x140 像素
+        animImage.setScale(0.19);
         animImage.setOrigin(0.5, 0.5);
         
         cardData.animImage = animImage;
@@ -238,7 +239,7 @@ class CharacterSelectScene extends Phaser.Scene {
             {
                 fontSize: '48px',
                 fill: '#FFEB3B',
-                fontFamily: 'Arial, sans-serif',
+                fontFamily: 'JasonHandwriting3, Arial, sans-serif',
                 fontStyle: 'bold'
             }
         );
