@@ -46,9 +46,9 @@ class PreloadScene extends Phaser.Scene {
         // 隱藏 HTML 載入畫面
         hideLoadingScreen();
         
-        // 前往第一個遊戲場景
+        // 前往第一個遊戲場景 - 改為直接進入 StartScene
         this.time.delayedCall(500, () => {
-            this.scene.start('FirstScene');
+            this.scene.start('StartScene');
         });
     }
     
@@ -133,6 +133,13 @@ class PreloadScene extends Phaser.Scene {
                 this.load.image(`${charKey}_intro_${i}`, `assets/gifs/${charKey}_intro_frames/frame_${i}.png`);
             }
         });
+        
+        // 載入開始場景的裝飾動畫 (four_char 和 four_char2)
+        // 假設 four_char_frames 有 4 幀
+        for (let i = 0; i < 4; i++) {
+            this.load.image(`four_char_${i}`, `assets/gifs/four_char_frames/frame_${i}.png`);
+            this.load.image(`four_char2_${i}`, `assets/gifs/four_char2_frames/frame_${i}.png`);
+        }
     }
     
     loadAudio() {
