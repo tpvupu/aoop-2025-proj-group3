@@ -20,7 +20,7 @@ class FirstScene:
             background_image = pygame.image.load(setting.ImagePath.FIRST_SCENE_PATH).convert()
             background_image = pygame.transform.smoothscale(background_image, (self.screen.get_width(), self.screen.get_height()))
             # 確保圖片大小符合螢幕
-            background_image = pygame.transform.scale(background_image, (self.screen.get_width(), self.screen.get_height()))
+            #background_image = pygame.transform.scale(background_image, (self.screen.get_width(), self.screen.get_height()))
             # 在螢幕上繪製圖片
             self.screen.blit(background_image, (0, 0))
             
