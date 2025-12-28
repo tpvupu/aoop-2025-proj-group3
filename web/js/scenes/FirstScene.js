@@ -17,6 +17,17 @@ class FirstScene extends Phaser.Scene {
         graphics.fillGradientStyle(0x667eea, 0x667eea, 0x764ba2, 0x764ba2, 1);
         graphics.fillRect(0, 0, width, height);
         
+        // 播放背景音樂（如果已載入）
+        if (window.GameState.bgmEnabled && this.sound.context.state !== 'suspended') {
+            try {
+                if (!this.sound.isPlaying('bgm_drumdrum')) {
+                    this.sound.play('bgm_drumdrum', { loop: true, volume: 0.5 });
+                }
+            } catch (e) {
+                console.log('音樂播放失敗');
+            }
+        }
+        
         // 遊戲標題
         const title = this.add.text(width / 2, height / 2 - 150, '今天的我也想耍廢', 
             GameUtils.createTextStyle(64, '#FFFFFF', 'Arial')
