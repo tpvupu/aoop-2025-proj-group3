@@ -229,7 +229,12 @@ class CharacterSelectScene extends Phaser.Scene {
         
         const confirmText = this.add.text(width / 2, height / 2, 
             `你選擇了 ${characterData.name}！`, 
-            GameUtils.createTextStyle(48, '#FFEB3B', 'Arial')
+            {
+                fontSize: '48px',
+                fill: '#FFEB3B',
+                fontFamily: '微軟正黑體, Arial',
+                fontStyle: 'bold'
+            }
         );
         confirmText.setOrigin(0.5);
         confirmText.setAlpha(0);

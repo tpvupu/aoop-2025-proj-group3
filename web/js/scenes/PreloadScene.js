@@ -123,9 +123,9 @@ class PreloadScene extends Phaser.Scene {
         // 載入角色選擇場景的 intro 動畫幀
         const frameCount = {
             bubu: 8,
-            yier: 8,
-            mitao: 8,
-            huihui: 8
+            yier: 14,
+            mitao: 12,
+            huihui: 12
         };
         
         Object.keys(frameCount).forEach(charKey => {
