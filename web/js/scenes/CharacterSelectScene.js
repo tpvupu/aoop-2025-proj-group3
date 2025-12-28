@@ -67,8 +67,24 @@ class CharacterSelectScene extends Phaser.Scene {
         });
         nameText.setOrigin(0.5);
         
-        // 角色圖片佔位符（實際應該載入角色圖片）
-        const avatar = this.add.circle(0, -30, 50, parseInt(characterData.color.replace('#', '0x')));
+        // 角色頭像圖片
+        const avatarMap = {
+            '布布': 'bubu_head',
+            '一二': 'yier_head',
+            '蜜桃': 'mitao_head',
+            '灰灰': 'huihui_head'
+        };
+        
+        const avatarKey = avatarMap[characterData.name] || 'bubu_head';
+        let avatar;
+        
+        try {
+            avatar = this.add.image(0, -30, avatarKey);
+            avatar.setScale(1.5);
+        } catch (e) {
+            // 如果圖片載入失敗，使用純色圓形替代
+            avatar = this.add.circle(0, -30, 50, parseInt(characterData.color.replace('#', '0x')));
+        }
         
         // 屬性顯示
         const statsY = 40;
