@@ -30,7 +30,7 @@ class FirstScene extends Phaser.Scene {
         
         // 遊戲標題
         const title = this.add.text(width / 2, height / 2 - 150, '今天的我也想耍廢', 
-            GameUtils.createTextStyle(64, '#FFFFFF', 'Arial')
+            GameUtils.createTextStyle(80, '#FFFFFF', 'Arial')
         );
         title.setOrigin(0.5);
         
@@ -46,7 +46,7 @@ class FirstScene extends Phaser.Scene {
         
         // 副標題
         const subtitle = this.add.text(width / 2, height / 2 - 80, 'Lazy Me Today Too', 
-            GameUtils.createTextStyle(32, '#FFEB3B', 'Arial')
+            GameUtils.createTextStyle(48, '#FFEB3B', 'Arial')
         );
         subtitle.setOrigin(0.5);
         
@@ -90,7 +90,7 @@ class FirstScene extends Phaser.Scene {
         
         // 按鈕文字
         const buttonText = this.add.text(0, 0, text, 
-            GameUtils.createTextStyle(28, '#FFFFFF', 'Arial')
+            GameUtils.createTextStyle(36, '#FFFFFF', 'Arial')
         );
         buttonText.setOrigin(0.5);
         
