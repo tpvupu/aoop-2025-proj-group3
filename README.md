@@ -1,6 +1,7 @@
 # ✨AOOP Final Project 2025
 
 ###  Lazy Me Today Too 今天的我也想耍廢😎 ——— 模擬人生大學版
+[遊戲執行檔下載](https://drive.google.com/drive/folders/1e8xFppjzU4zMVT06rckOlk794lzat7y4?usp=sharing)
 
 GIF 素材來源：\
 [素材來源1](https://www.aigei.com/s?q=一二布布)
