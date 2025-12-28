@@ -32,16 +32,9 @@ class CharacterSelectScene extends Phaser.Scene {
             graphics.fillRect(0, 0, width, height);
         }
         
-        // 標題
-        const title = this.add.text(width / 2, 20, '選擇你的角色', 
-            {
-                fontSize: '40px',
-                fill: '#000000',
-                fontFamily: 'Arial',
-                fontStyle: 'bold'
-            }
-        );
-        title.setOrigin(0.5, 0);
+        // 白色透明遮罩（如 Pygame 設定）
+        const mask = this.add.rectangle(width / 2, height / 2, width, height, 0xFFFFFF, 0.1);
+        mask.setOrigin(0.5, 0.5);
         
         // 卡片配置 - 根據 Pygame 版本的比例設置
         // Pygame: 屏幕 1200x800, 卡片 500x300, margin 30
@@ -55,25 +48,29 @@ class CharacterSelectScene extends Phaser.Scene {
                 charKey: 'bubu',
                 x: marginX + cardWidth / 2,
                 y: marginY + cardHeight / 2,
-                description: "大家好～我是布布！\n我喜歡在網路上盡情地打遊戲！\n希望這學期所有的課都可以過"
+                description: "大家好～我是布布！\n我喜歡在網路上盡情地打遊戲！\n希望這學期所有的課都可以過",
+                englishName: "Bubu"
             },
             {
                 charKey: 'yier',
                 x: width - marginX - cardWidth / 2,
                 y: marginY + cardHeight / 2,
-                description: "大家好～我是一二！\n我熱衷於系上活動以及社團～\n認識好多學長姐嘿嘿～"
+                description: "大家好～我是一二！\n我熱衷於系上活動以及社團～\n認識好多學長姐嘿嘿～",
+                englishName: "Yier"
             },
             {
                 charKey: 'mitao',
                 x: marginX + cardWidth / 2,
                 y: height - marginY - cardHeight / 2,
-                description: "大家好～我是蜜桃！\n嗚嗚嗚這學期不小心選太多課...\n現在實在是捲不動了～"
+                description: "大家好～我是蜜桃！\n嗚嗚嗚這學期不小心選太多課...\n現在實在是捲不動了～",
+                englishName: "Mitao"
             },
             {
                 charKey: 'huihui',
                 x: width - marginX - cardWidth / 2,
                 y: height - marginY - cardHeight / 2,
-                description: "大家好～我是灰灰！\n我正在追求自己真正想做的事！\n重要的是追尋我的快樂貓生！"
+                description: "大家好～我是灰灰！\n我正在追求自己真正想做的事！\n重要的是追尋我的快樂貓生！",
+                englishName: "Huihui"
             }
         ];
         
@@ -86,7 +83,8 @@ class CharacterSelectScene extends Phaser.Scene {
                 cardWidth,
                 cardHeight,
                 config.description,
-                config.charKey
+                config.charKey,
+                config.englishName
             );
             this.cards.push(card);
         });
@@ -116,7 +114,7 @@ class CharacterSelectScene extends Phaser.Scene {
         });
     }
     
-    createCharacterCard(x, y, characterData, cardWidth, cardHeight, description, charKey) {
+    createCharacterCard(x, y, characterData, cardWidth, cardHeight, description, charKey, englishName) {
         const card = this.add.container(x, y);
         const cardData = { charKey, animImage: null, container: card, frameIndex: 0 };
         
@@ -140,11 +138,12 @@ class CharacterSelectScene extends Phaser.Scene {
         );
         descText.setOrigin(0, 0);
         
-        // 左下角：角色名稱
+        // 左下角：角色中文名稱
+        const chineseName = characterData.name.split(' ')[0];
         const nameText = this.add.text(
             -cardWidth / 2 + 20,
-            cardHeight / 2 - 40,
-            characterData.name,
+            cardHeight / 2 - 60,
+            chineseName,
             {
                 fontSize: '36px',
                 fill: '#323232',
@@ -154,19 +153,36 @@ class CharacterSelectScene extends Phaser.Scene {
         );
         nameText.setOrigin(0, 0.5);
         
-        // 右下角：角色動畫
+        // 左下角：角色英文名稱
+        const englishNameText = this.add.text(
+            -cardWidth / 2 + 20,
+            cardHeight / 2 - 20,
+            englishName,
+            {
+                fontSize: '28px',
+                fill: '#646464',
+                fontFamily: 'JasonHandwriting3, Arial, sans-serif'
+            }
+        );
+        englishNameText.setOrigin(0, 0.5);
+        
+        // 右下角：角色動畫 - 根據 Pygame 比例計算
+        // Pygame: 卡片 500x300, 動畫 140x140
+        // 占比: 140/500 = 0.28 (寬度), 140/300 ≈ 0.467 (高度)
+        const targetAnimWidth = cardWidth * 0.45;
         const animImage = this.add.image(
             cardWidth / 2 - 70,
             cardHeight / 2 - 50,
             `${charKey}_intro_0`
         );
-        // 調整動畫圖片大小和位置 - 約 140x140 像素
-        animImage.setScale(0.19);
+        // 假設 GIF 原始寬度約 600px，根據目標寬度計算縮放
+        const animScale = targetAnimWidth / 600;
+        animImage.setScale(animScale);
         animImage.setOrigin(0.5, 0.5);
         
         cardData.animImage = animImage;
         
-        card.add([bg, descText, nameText, animImage]);
+        card.add([bg, descText, nameText, englishNameText, animImage]);
         
         // 互動效果
         const originalStroke = borderColor;
