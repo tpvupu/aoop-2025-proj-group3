@@ -4,8 +4,7 @@
 [遊戲執行檔下載](https://drive.google.com/drive/folders/1e8xFppjzU4zMVT06rckOlk794lzat7y4?usp=sharing)
 
 GIF 素材來源：\
-[素材來源1](https://www.aigei.com/s?q=一二布布)
-[素材來源2](https://www.aigei.com/s?q=蜜桃灰灰) 
+[素材來源](https://www.aigei.com/s?q=一二布布)
 
 <p align="center">
   <img src="resource/image/game_UI/first_scene.png" alt="遊戲主選單截圖" width="750"/>
