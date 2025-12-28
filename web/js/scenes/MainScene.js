@@ -62,36 +62,35 @@ class MainScene extends Phaser.Scene {
         
         // 根據週數選擇角色動畫
         // 參照 main_scene.py: self.animator = self.player.gif_choose(self.player.week_number)
-        const animKey = this.getCharacterAnimKey(player);
+        const animState = this.getCharacterAnimState(player);
+        const animFrameCount = this.getAnimationFrameCount(player.characterId, animState);
         
-        // 創建角色動畫 - 暫時使用靜態頭像，後續可擴展為 GIF 動畫
+        // 創建角色動畫
         const charX = width * 0.75; // 右側 3/4 位置
         const charY = height * 0.4;
         
-        this.characterSprite = this.add.image(charX, charY, player.characterId + '_head');
+        // 初始化第一幀
+        const firstFrameKey = `${player.characterId}_${animState}_0`;
+        this.characterSprite = this.add.image(charX, charY, firstFrameKey);
         this.characterSprite.setScale(2.5);
         this.characterSprite.setInteractive({ useHandCursor: true });
+        
+        // 儲存動畫信息用於 update 循環
+        this.characterAnimState = animState;
+        this.characterAnimFrameCount = animFrameCount;
+        this.characterAnimFrameIndex = 0;
+        this.characterAnimSpeed = 100; // 每幀持續時間（毫秒）
+        this.characterAnimTimer = 0;
         
         // 點擊角色播放互動動畫
         this.characterSprite.on('pointerdown', () => {
             this.handleCharacterClick();
         });
-        
-        // 為角色添加輕微的呼吸動畫
-        this.tweens.add({
-            targets: this.characterSprite,
-            scaleX: 2.6,
-            scaleY: 2.6,
-            duration: 2000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
     }
     
-    getCharacterAnimKey(player) {
+    getCharacterAnimState(player) {
         // 參照 main_scene.py: self.animator = self.player.gif_choose(self.player.week_number)
-        // 根據週數選擇不同的動畫狀態
+        // 根據週數返回不同動畫狀態
         const week = player.weekNumber;
         
         // 簡化版本：根據週數返回不同動畫狀態
@@ -102,6 +101,44 @@ class MainScene extends Phaser.Scene {
         if (week === 16) return 'final';
         
         return 'intro';
+    }
+    
+    getAnimationFrameCount(characterId, animState) {
+        // 定義每個角色動畫的幀數（必須與 PreloadScene 中的定義相符）
+        const frameData = {
+            bubu: {
+                intro: 8,
+                study: 2,
+                active: 11,
+                exam: 46,
+                final: 24
+            },
+            yier: {
+                intro: 14,
+                study: 4,
+                active: 18,
+                exam: 38,
+                final: 29
+            },
+            mitao: {
+                intro: 12,
+                study: 12,
+                active: 10,
+                exam: 14,
+                final: 12
+            },
+            huihui: {
+                intro: 12,
+                study: 8,
+                active: 4,
+                exam: 12,
+                final: 14
+            }
+        };
+        
+        return frameData[characterId] && frameData[characterId][animState] 
+            ? frameData[characterId][animState] 
+            : 8; // 預設 8 幀
     }
     
     createNextWeekButton() {
@@ -616,6 +653,24 @@ class MainScene extends Phaser.Scene {
     }
     
     update(time, delta) {
+        // 更新角色動畫幀
+        if (this.characterAnimTimer !== undefined) {
+            this.characterAnimTimer += delta;
+            
+            if (this.characterAnimTimer >= this.characterAnimSpeed) {
+                this.characterAnimTimer = 0;
+                this.characterAnimFrameIndex = (this.characterAnimFrameIndex + 1) % this.characterAnimFrameCount;
+                
+                // 更新角色精靈的紋理
+                const player = window.GameState.getPlayer();
+                const frameKey = `${player.characterId}_${this.characterAnimState}_${this.characterAnimFrameIndex}`;
+                
+                if (this.textures.exists(frameKey)) {
+                    this.characterSprite.setTexture(frameKey);
+                }
+            }
+        }
+        
         // 更新表情按鈕的點擊動畫 - 參照 main_scene.py
         this.emojiClickedFrames.forEach((frames, i) => {
             if (frames > 0) {
