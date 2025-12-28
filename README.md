@@ -65,7 +65,19 @@ Group3 開發人員如下：
   <img src="simulation_plots/gpa_highlight.png" alt="GPA" width="750"/>
 </p>
 
+## OpenAI API System
+本專案另增加AI的即時回覆系統，通過提供OpenAI API一些適當的prompt
+,讓OpenAI回傳給遊戲內，自動生成回覆。
+<p align="center">
+  <img src="resource/image/game_UI/result_api_advise.png" alt="OPENAI API 分析結果" width="750"/>
+</p>
 
+**參考 [Open AI API 申請](https://platform.openai.com/docs/quickstart) 獲得個人API KEY
+使用玩家需在terminal引入OpenAI Key，指令如下 :
+
+``` bash
+export OPENAI_API_KEY="your_api_key_here"
+```
 
 
 
@@ -159,17 +171,7 @@ oop-2025-proj-group10/
     python main.py
     ```
 
-# OpenAI API System
-本專案另增加AI的即時回覆系統，通過提供OpenAI API一些適當的prompt
-,讓OpenAI回傳給遊戲內，自動生成回覆。
-<p align="center">
-  <img src="resource/image/game_UI/result_api_advise.png" alt="OPENAI API 分析結果" width="750"/>
-</p>
-參考 [OPENAI_API申請](https://platform.openai.com/docs/quickstart) 獲得個人API KEY
-使用玩家需在terminal引入OpenAI Key，指令如下 :
-```bash
-export OPENAI_API_KEY="your_api_key_here"
-```
+
  
  
 
