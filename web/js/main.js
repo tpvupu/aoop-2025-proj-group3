@@ -17,7 +17,6 @@ const phaserConfig = {
     scene: [
         BootScene,
         PreloadScene,
-        FirstScene,
         StartScene,
         IntroScene,
         CharacterSelectScene,
