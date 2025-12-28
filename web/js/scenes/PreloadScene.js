@@ -117,12 +117,22 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('set_icon', 'assets/images/set.png');
         this.load.image('event_icon', 'assets/images/event_icon.PNG');
         
-        // 載入背景（如果有）
-        try {
-            this.load.image('background_intro', 'assets/images/background_intro.png');
-        } catch (e) {
-            console.log('背景圖載入失敗，使用預設顏色');
-        }
+        // 載入背景
+        this.load.image('background_intro', 'assets/images/background_intro.png');
+        
+        // 載入角色選擇場景的 intro 動畫幀
+        const frameCount = {
+            bubu: 8,
+            yier: 8,
+            mitao: 8,
+            huihui: 8
+        };
+        
+        Object.keys(frameCount).forEach(charKey => {
+            for (let i = 0; i < frameCount[charKey]; i++) {
+                this.load.image(`${charKey}_intro_${i}`, `assets/gifs/${charKey}_intro_frames/frame_${i}.png`);
+            }
+        });
     }
     
     loadAudio() {
