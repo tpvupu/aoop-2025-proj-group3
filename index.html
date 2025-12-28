@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazy Me Today Too - 今天也懶懶的我</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        #pygame-canvas {
+            background: #000;
+            border-radius: 10px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            margin: 20px auto;
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .loading {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .info p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        .controls p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        
+        #output {
+            background: rgba(0,0,0,0.3);
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .subtitle {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Lazy Me Today Too</h1>
+        <p class="subtitle">今天也懶懶的我 - 網頁版</p>
+        
+        <div id="loading-screen">
+            <div class="loading">遊戲載入中...</div>
+            <div class="spinner"></div>
+            <p>第一次載入可能需要較長時間,請稍候</p>
+        </div>
+        
+        <canvas id="pygame-canvas" width="1200" height="800"></canvas>
+        
+        <div class="info">
+            <p>📖 <strong>遊戲說明:</strong> 體驗大學生活,平衡學習、休息、娛樂和社交!</p>
+            <div class="controls">
+                <p>🖱️ 使用滑鼠點擊進行遊戲</p>
+                <p>🔊 支援音效和背景音樂</p>
+                <p>💾 進度會保存在瀏覽器本地存儲中</p>
+            </div>
+        </div>
+        
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        // Pygbag initialization
+        const canvas = document.getElementById('pygame-canvas');
+        const loadingScreen = document.getElementById('loading-screen');
+        const output = document.getElementById('output');
+        
+        // Show console output for debugging
+        const originalConsoleLog = console.log;
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            const message = args.join(' ');
+            if (output) {
+                output.style.display = 'block';
+                output.innerHTML += message + '<br>';
+                output.scrollTop = output.scrollHeight;
+            }
+        };
+        
+        // Hide loading screen when game starts
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                }
+            }, 2000);
+        });
+    </script>
+    
+    <!-- Pygbag will inject the game script here -->
+    <script src="pygame.js" async></script>
+</body>
+</html>

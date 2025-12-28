@@ -1,0 +1,63 @@
+# Pygbag configuration for Lazy Me Today Too
+
+[app]
+# Application name
+name = "Lazy Me Today Too"
+
+# Main entry point
+main = main.py
+
+# Window size
+width = 1200
+height = 800
+
+# Title shown in browser
+title = "Lazy Me Today Too - 今天也懶懶的我"
+
+# Package files to include
+packages = 
+    pygame
+    asyncio
+    json
+    os
+    sys
+
+# Directories to include as assets
+include =
+    resource/
+    event/
+    simulation_plots/
+    UI/
+    AI/
+    services/
+
+# Files to exclude (reduce bundle size)
+exclude =
+    **/__pycache__/
+    **/*.pyc
+    build/
+    dist/
+    .git/
+    .github/
+    Docker/
+    *.md
+    LICENSE
+    member.txt
+    requirements.txt
+    build.sh
+    build.spec
+    docker_*.sh
+    package_mac_distro.sh
+
+[pygbag]
+# Use CDN for faster loading
+cdn = true
+
+# Optimize assets
+optimize = true
+
+# Enable debugging (set to false for production)
+debug = false
+
+# Compression
+compression = true

@@ -1,7 +1,9 @@
 # ✨AOOP Final Project 2025
 
 ###  Lazy Me Today Too 今天的我也想耍廢😎 ——— 模擬人生大學版
-[遊戲執行檔下載](https://drive.google.com/drive/folders/1e8xFppjzU4zMVT06rckOlk794lzat7y4?usp=sharing)
+
+🎮 **[立即在線遊玩（Web版）](https://xiaotin22.github.io/aoop-2025-proj-group3/)**  
+📦 [桌面版執行檔下載](https://drive.google.com/drive/folders/1e8xFppjzU4zMVT06rckOlk794lzat7y4?usp=sharing)
 
 GIF 素材來源：\
 [素材來源](https://www.aigei.com/s?q=一二布布)
@@ -171,8 +173,69 @@ aoop-2025-proj-group3/
     python main.py
     ```
 
+---
 
-# About Our Docker 🚀
+## 🌐 網頁版部署 (GitHub Pages)
+
+### 快速開始 - 在線遊玩
+
+遊戲已經部署到 GitHub Pages，可以直接在瀏覽器中遊玩：
+**[立即遊玩](https://yourname.github.io/aoop-2025-proj-group3/)**
+
+> ⚠️ 注意：首次載入可能需要較長時間（約 1-2 分鐘），請耐心等待
+
+### 本地構建 Web 版本
+
+如果你想在本地構建並測試 Web 版本：
+
+1. **安裝 pygbag**
+   ```bash
+   pip install pygbag
+   ```
+
+2. **構建遊戲**
+   ```bash
+   # 使用提供的腳本
+   ./build_web.sh
+   
+   # 或手動構建
+   pygbag --build main.py
+   ```
+
+3. **本地測試**
+   ```bash
+   # 啟動本地伺服器
+   python -m http.server --directory build/web 8000
+   
+   # 在瀏覽器中打開
+   # http://localhost:8000
+   ```
+
+### 自動部署到 GitHub Pages
+
+專案已配置 GitHub Actions 自動部署workflow。每次推送到主分支時，會自動：
+1. 構建 Web 版本
+2. 部署到 GitHub Pages
+
+**設置步驟：**
+1. 進入你的 GitHub 倉庫設置
+2. 點擊 "Pages" 標籤
+3. Source 選擇 "GitHub Actions"
+4. 推送代碼後，等待 Actions 完成部署
+
+### Web 版本特性
+
+✅ **支援功能：**
+- 完整的遊戲體驗
+- 音效和背景音樂
+- 角色動畫
+- 數據持久化（瀏覽器本地存儲）
+
+❌ **限制：**
+- OpenAI API 功能在 Web 版本中不可用（需要 API key）
+- 首次載入較慢（需下載所有資源）
+
+--- About Our Docker 🚀
 **除了上述的虛擬環境，也可以使用我們建置的 Docker ~**
 
 🧰 前置需求（第一次才需要）
