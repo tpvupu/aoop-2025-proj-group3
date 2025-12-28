@@ -160,6 +160,53 @@ class PreloadScene extends Phaser.Scene {
         for (let i = 0; i < 8; i++) {
             this.load.image(`yier_play_game_${i}`, `assets/gifs/yier_play_game_frames/frame_${i}.png`);
         }
+        
+        // 載入主場景的角色動畫幀
+        // 定義每個角色的動畫配置 (根據週數選擇不同的動畫)
+        const mainSceneAnimations = {
+            bubu: {
+                intro: { key: 'bubu_intro', frames: 8 },
+                study: { key: 'bubu_study', frames: 2 },
+                active: { key: 'bubu_active1', frames: 11 },
+                exam: { key: 'bubu_lazy', frames: 46 },
+                final: { key: 'bubu_super_tired', frames: 24 }
+            },
+            yier: {
+                intro: { key: 'yier_intro', frames: 14 },
+                study: { key: 'yier_working', frames: 4 },
+                active: { key: 'yier_active1', frames: 18 },
+                exam: { key: 'yier_thinking', frames: 38 },
+                final: { key: 'yier_sososad', frames: 29 }
+            },
+            mitao: {
+                intro: { key: 'mitao_intro', frames: 12 },
+                study: { key: 'mitao_testing', frames: 12 },
+                active: { key: 'mitao_active1', frames: 10 },
+                exam: { key: 'mitao_low_mood', frames: 14 },
+                final: { key: 'mitao_tired', frames: 12 }
+            },
+            huihui: {
+                intro: { key: 'huihui_intro', frames: 12 },
+                study: { key: 'huihui_running', frames: 8 },
+                active: { key: 'huihui_active1', frames: 4 },
+                exam: { key: 'huihui_sleep', frames: 12 },
+                final: { key: 'huihui_sad', frames: 14 }
+            }
+        };
+        
+        // 載入所有主場景動畫幀
+        Object.keys(mainSceneAnimations).forEach(charKey => {
+            const charAnims = mainSceneAnimations[charKey];
+            Object.keys(charAnims).forEach(animState => {
+                const animConfig = charAnims[animState];
+                for (let i = 0; i < animConfig.frames; i++) {
+                    this.load.image(
+                        `${charKey}_${animState}_${i}`,
+                        `assets/gifs/${animConfig.key}_frames/frame_${i}.png`
+                    );
+                }
+            });
+        });
     }
     
     loadAudio() {
