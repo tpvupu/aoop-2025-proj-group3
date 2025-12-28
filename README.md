@@ -73,7 +73,7 @@ Group3 開發人員如下：
 </p>
 
 **參考 [Open AI API 申請](https://platform.openai.com/docs/quickstart) 獲得個人API KEY**
-使用玩家需在terminal引入OpenAI Key，指令如下 :
+,使用玩家需在terminal引入OpenAI Key，指令如下 :
 
 ``` bash
 export OPENAI_API_KEY="your_api_key_here"
@@ -171,9 +171,6 @@ oop-2025-proj-group10/
     python main.py
     ```
 
-
- 
- 
 
 # About Our Docker 🚀
 **除了上述的虛擬環境，也可以使用我們建置的 Docker ~**
