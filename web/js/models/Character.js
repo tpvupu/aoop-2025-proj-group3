@@ -4,9 +4,11 @@
  */
 
 class Character {
-    constructor(characterData) {
+    constructor(characterData, characterId = '') {
         // 基本屬性
+        this.characterId = characterId; // 角色ID (bubu, yier, mitao, huihui)
         this.name = characterData.name;
+        this.chineseName = characterData.name; // 中文名字
         this.intelligence = characterData.intelligence;
         this.mood = characterData.mood;
         this.energy = characterData.energy;
