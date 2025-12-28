@@ -72,7 +72,7 @@ Group3 開發人員如下：
   <img src="resource/image/game_UI/result_api_advise.png" alt="OPENAI API 分析結果" width="750"/>
 </p>
 
-**參考 [Open AI API 申請](https://platform.openai.com/docs/quickstart) 獲得個人API KEY
+**參考 [Open AI API 申請](https://platform.openai.com/docs/quickstart) 獲得個人API KEY**
 使用玩家需在terminal引入OpenAI Key，指令如下 :
 
 ``` bash
