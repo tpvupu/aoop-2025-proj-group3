@@ -14,16 +14,15 @@ class MainScene extends Phaser.Scene {
         const player = window.GameState.getPlayer();
         
         // 背景 - 嘗試載入原有背景圖
-        try {
-            if (this.textures.exists('background_intro')) {
-                this.add.image(width / 2, height / 2, 'background_intro').setScale(
-                    Math.max(width / 1200, height / 800)
-                );
-            } else {
-                this.add.rectangle(width / 2, height / 2, width, height, 0xF0F4F8);
-            }
-        } catch (e) {
-            this.add.rectangle(width / 2, height / 2, width, height, 0xF0F4F8);
+        if (this.textures.exists('background_intro')) {
+            this.add.image(width / 2, height / 2, 'background_intro').setScale(
+                Math.max(width / 1200, height / 800)
+            );
+        } else {
+            // 使用漸層背景
+            const graphics = this.add.graphics();
+            graphics.fillGradientStyle(0xE8F4F8, 0xE8F4F8, 0xDFF0F5, 0xDFF0F5, 1);
+            graphics.fillRect(0, 0, width, height);
         }
         
         // 頂部資訊欄
