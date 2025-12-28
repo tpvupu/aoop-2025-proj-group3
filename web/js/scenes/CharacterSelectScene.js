@@ -78,11 +78,13 @@ class CharacterSelectScene extends Phaser.Scene {
         const avatarKey = avatarMap[characterData.name] || 'bubu_head';
         let avatar;
         
-        try {
+        // 檢查紋理是否已載入
+        if (this.textures.exists(avatarKey)) {
             avatar = this.add.image(0, -30, avatarKey);
             avatar.setScale(1.5);
-        } catch (e) {
-            // 如果圖片載入失敗，使用純色圓形替代
+        } else {
+            // 如果圖片沒有載入，使用純色圓形替代
+            console.warn(`圖片 ${avatarKey} 未載入`);
             avatar = this.add.circle(0, -30, 50, parseInt(characterData.color.replace('#', '0x')));
         }
         
