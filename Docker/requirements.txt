@@ -1,11 +1,8 @@
 pygame
 numpy
-pandas
 matplotlib
-pytest
 pygame_gui
 Pillow
-Counter
 pygbag
 
 # AI (optional, for advice generation)
