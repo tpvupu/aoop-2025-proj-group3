@@ -10,6 +10,12 @@ class CharacterSelectScene extends Phaser.Scene {
         this.animationTimer = 0;
         this.animationSpeed = 150; // 每幀持續時間（毫秒）
         this.cards = [];
+        this.frameCount = {
+            bubu: 8,
+            yier: 14,
+            mitao: 12,
+            huihui: 12
+        };
     }
     
     create() {
@@ -98,7 +104,8 @@ class CharacterSelectScene extends Phaser.Scene {
         // 更新所有卡片的動畫幀
         this.cards.forEach(cardData => {
             if (cardData.animImage) {
-                this.frameIndex = (this.frameIndex + 1) % 8; // 假設所有動畫都是 8 幀
+                const maxFrames = this.frameCount[cardData.charKey];
+                this.frameIndex = (this.frameIndex + 1) % maxFrames;
                 const nextFrameKey = `${cardData.charKey}_intro_${this.frameIndex}`;
                 
                 if (this.textures.exists(nextFrameKey)) {
