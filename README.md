@@ -108,12 +108,12 @@ oop-2025-proj-group10/
 ├── event/
 │   ├── event.json               # 各週事件資料
 │   └── game_setting/            # 遊戲劇情文件
-|
+│
 ├── AI/                          # 模擬系統
 │   ├── bvtree.py                # 選擇行為樹策略
-|   ├── simulation.py            # 模擬程式
-|   └── test_...py               # 其他測試檔
-|
+│   ├── simulation.py            # 模擬程式
+│   └── test_...py               # 其他測試檔
+│
 ├── README.md                    # 專案說明文件
 ├── Docker/
 ```
