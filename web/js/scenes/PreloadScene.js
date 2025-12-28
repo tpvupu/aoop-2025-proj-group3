@@ -100,21 +100,52 @@ class PreloadScene extends Phaser.Scene {
     }
     
     loadImages() {
-        // 載入按鈕和 UI 元素
-        // 注意：這些路徑需要根據實際情況調整
+        // 載入 UI 圖片
+        this.load.image('bubu_head', 'assets/images/Bubu_head.png');
+        this.load.image('yier_head', 'assets/images/Yier_head.png');
+        this.load.image('mitao_head', 'assets/images/Mitao_head.png');
+        this.load.image('huihui_head', 'assets/images/Huihui_head.png');
         
-        // 範例：載入背景圖
-        // this.load.image('background', GameConfig.paths.images + 'background.png');
+        // 載入情感表情
+        this.load.image('emoji_happy', 'assets/images/happy.png');
+        this.load.image('emoji_sad', 'assets/images/sad.png');
+        this.load.image('emoji_angry', 'assets/images/angry.png');
+        this.load.image('emoji_heart', 'assets/images/heart.png');
         
-        // 暫時使用純色替代圖片
-        console.log('圖片資源需要手動調整路徑');
+        // 載入按鈕和 UI
+        this.load.image('notebook', 'assets/images/notebook.png');
+        this.load.image('set_icon', 'assets/images/set.png');
+        this.load.image('event_icon', 'assets/images/event_icon.PNG');
+        
+        // 載入背景（如果有）
+        try {
+            this.load.image('background_intro', 'assets/images/background_intro.png');
+        } catch (e) {
+            console.log('背景圖載入失敗，使用預設顏色');
+        }
     }
     
     loadAudio() {
-        // 載入音效
-        // this.load.audio('bgm', GameConfig.paths.sounds + 'bgm.mp3');
+        // 載入背景音樂
+        try {
+            const bgmPath = 'assets/sounds/bgm/';
+            this.load.audio('bgm_drumdrum', bgmPath + 'drumdrum.ogg');
+            this.load.audio('bgm_yier_bubu', bgmPath + 'yier_bubu.ogg');
+            this.load.audio('bgm_mitao_huihui', bgmPath + 'mitao_huihui.ogg');
+        } catch (e) {
+            console.log('BGM 載入失敗');
+        }
         
-        console.log('音效資源需要手動調整路徑');
+        // 載入音效
+        try {
+            const sfxPath = 'assets/sounds/sound_effect/';
+            this.load.audio('sfx_bling', sfxPath + 'bling.ogg');
+            this.load.audio('sfx_bo', sfxPath + 'bo.ogg');
+            this.load.audio('sfx_dong', sfxPath + 'dong.ogg');
+            this.load.audio('sfx_menu_hover', sfxPath + 'menu_hover.ogg');
+        } catch (e) {
+            console.log('音效載入失敗');
+        }
     }
     
     createMockEventsData() {
