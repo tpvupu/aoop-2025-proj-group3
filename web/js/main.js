@@ -49,8 +49,8 @@ const GameState = {
     /**
      * 設置玩家
      */
-    setPlayer(characterData) {
-        this.player = new Character(characterData);
+    setPlayer(characterData, characterId = '') {
+        this.player = new Character(characterData, characterId);
     },
     
     /**
