@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phaser 資源載入測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #333;
+        }
+        #game-container {
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            background: #eee;
+            min-height: 600px;
+        }
+        .console {
+            background: #222;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .log-info { color: #0f0; }
+        .log-warn { color: #fa0; }
+        .log-error { color: #f00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Phaser 遊戲 - 資源載入測試</h1>
+        <div id="game-container"></div>
+        <h2>📋 控制台輸出</h2>
+        <div class="console" id="console"></div>
+    </div>
+
+    <!-- Phaser -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+    
+    <script>
+        // 自定義控制台
+        const consoleDiv = document.getElementById('console');
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+
+        function log(type, ...args) {
+            const message = args.map(arg => {
+                if (typeof arg === 'object') {
+                    return JSON.stringify(arg, null, 2);
+                }
+                return String(arg);
+            }).join(' ');
+            
+            const line = document.createElement('div');
+            line.className = `log-${type}`;
+            line.textContent = `[${type.toUpperCase()}] ${message}`;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        console.log = (...args) => {
+            originalLog(...args);
+            log('info', ...args);
+        };
+        
+        console.warn = (...args) => {
+            originalWarn(...args);
+            log('warn', ...args);
+        };
+        
+        console.error = (...args) => {
+            originalError(...args);
+            log('error', ...args);
+        };
+
+        console.log('開始加載 Phaser 遊戲...');
+
+        // 測試場景
+        class TestScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'TestScene' });
+            }
+            
+            preload() {
+                console.log('preload() 開始');
+                
+                // 嘗試載入所有資源
+                const images = [
+                    { key: 'bubu_head', path: 'assets/images/Bubu_head.png' },
+                    { key: 'yier_head', path: 'assets/images/Yier_head.png' },
+                    { key: 'mitao_head', path: 'assets/images/Mitao_head.png' },
+                    { key: 'huihui_head', path: 'assets/images/Huihui_head.png' },
+                    { key: 'happy', path: 'assets/images/happy.png' },
+                    { key: 'sad', path: 'assets/images/sad.png' },
+                    { key: 'angry', path: 'assets/images/angry.png' },
+                    { key: 'heart', path: 'assets/images/heart.png' },
+                    { key: 'background_intro', path: 'assets/images/background_intro.png' }
+                ];
+                
+                images.forEach(img => {
+                    console.log(`載入圖片: ${img.key} -> ${img.path}`);
+                    this.load.image(img.key, img.path);
+                });
+                
+                // 載入音頻
+                const audios = [
+                    { key: 'bgm_drumdrum', path: 'assets/sounds/bgm/drumdrum.ogg' },
+                    { key: 'bgm_yier_bubu', path: 'assets/sounds/bgm/yier_bubu.ogg' },
+                    { key: 'bgm_mitao_huihui', path: 'assets/sounds/bgm/mitao_huihui.ogg' }
+                ];
+                
+                audios.forEach(audio => {
+                    console.log(`載入音頻: ${audio.key} -> ${audio.path}`);
+                    this.load.audio(audio.key, audio.path);
+                });
+                
+                // 進度事件
+                this.load.on('progress', (progress) => {
+                    console.log(`載入進度: ${Math.floor(progress * 100)}%`);
+                });
+                
+                this.load.on('complete', () => {
+                    console.log('preload() 完成！');
+                });
+                
+                this.load.on('loaderror', (fileObject) => {
+                    console.error(`載入失敗: ${fileObject.key} -> ${fileObject.url}`);
+                });
+            }
+            
+            create() {
+                console.log('create() 開始');
+                
+                const width = this.cameras.main.width;
+                const height = this.cameras.main.height;
+                
+                // 顯示標題
+                const title = this.add.text(width / 2, 30, '✓ Phaser 遊戲成功初始化！', {
+                    fontSize: '32px',
+                    fill: '#00ff00',
+                    align: 'center'
+                });
+                title.setOrigin(0.5);
+                
+                // 顯示所有已載入的紋理
+                console.log('已載入的紋理:');
+                const textureKeys = this.textures.getTextureKeys();
+                textureKeys.forEach(key => {
+                    console.log(`  - ${key}`);
+                });
+                
+                // 顯示角色頭像
+                let y = 100;
+                const characters = [
+                    { key: 'bubu_head', name: '布布' },
+                    { key: 'yier_head', name: '一二' },
+                    { key: 'mitao_head', name: '蜜桃' },
+                    { key: 'huihui_head', name: '灰灰' }
+                ];
+                
+                characters.forEach(char => {
+                    const text = this.add.text(20, y, `${char.name}:`, { fontSize: '18px', fill: '#333' });
+                    
+                    if (this.textures.exists(char.key)) {
+                        const img = this.add.image(150, y, char.key);
+                        img.setScale(0.3);
+                        console.log(`✓ ${char.key} 成功載入`);
+                    } else {
+                        const errText = this.add.text(150, y, '❌ 未載入', { fontSize: '16px', fill: '#f00' });
+                        console.warn(`✗ ${char.key} 未載入`);
+                    }
+                    
+                    y += 80;
+                });
+                
+                // 顯示背景圖
+                y += 20;
+                const bgText = this.add.text(20, y, '背景:', { fontSize: '18px', fill: '#333' });
+                if (this.textures.exists('background_intro')) {
+                    const bg = this.add.image(150, y, 'background_intro');
+                    bg.setScale(0.2);
+                    console.log('✓ background_intro 成功載入');
+                } else {
+                    const errText = this.add.text(150, y, '❌ 未載入', { fontSize: '16px', fill: '#f00' });
+                    console.warn('✗ background_intro 未載入');
+                }
+            }
+        }
+
+        // 遊戲配置
+        const config = {
+            type: Phaser.AUTO,
+            width: 1200,
+            height: 800,
+            parent: 'game-container',
+            backgroundColor: '#667eea',
+            scene: [TestScene]
+        };
+
+        // 創建遊戲
+        console.log('正在創建 Phaser 遊戲...');
+        const game = new Phaser.Game(config);
+    </script>
+</body>
+</html>
