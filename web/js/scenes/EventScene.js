@@ -14,67 +14,76 @@ class EventScene extends Phaser.Scene {
         const player = window.GameState.getPlayer();
         const eventsData = window.GameState.getEventsData();
         
-        // 背景
-        this.add.rectangle(width / 2, height / 2, width, height, 0xE8F5E9);
+        // 背景圖片
+        if (this.textures.exists('background_intro')) {
+            const bg = this.add.image(width / 2, height / 2, 'background_intro');
+            const scale = Math.max(width / bg.width, height / bg.height);
+            bg.setScale(scale);
+        } else {
+            this.add.rectangle(width / 2, height / 2, width, height, 0xE8F5E9);
+        }
         
         // 獲取當前週的事件
-        const weekEvent = eventsData[player.weekNumber];
+        const weekKey = `week_${player.weekNumber}`;
+        const weekEvent = eventsData[weekKey];
         
-        if (!weekEvent) {
+        if (!weekEvent || !weekEvent.events || !weekEvent.events.options) {
             console.error(`No event data for week ${player.weekNumber}`);
             this.scene.start('MainScene');
             return;
         }
         
-        // 週數顯示
-        const weekText = this.add.text(width / 2, 80, 
-            `第 ${player.weekNumber} 週`, 
-            GameUtils.createTextStyle(42, '#2E7D32', 'Arial')
+        // 標題（週數和事件標題）
+        const titleText = this.add.text(width / 2, 60, 
+            weekEvent.title || `第 ${player.weekNumber} 週`, 
+            {
+                fontSize: '42px',
+                fill: '#2E7D32',
+                fontFamily: 'JasonHandwriting3, Arial',
+                fontStyle: 'bold'
+            }
         );
-        weekText.setOrigin(0.5);
+        titleText.setOrigin(0.5);
         
-        // 事件描述
-        const eventBg = this.add.rectangle(width / 2, 180, 900, 120, 0xFFFFFF);
-        eventBg.setStrokeStyle(3, 0x4CAF50);
+        // 事件描述背景
+        const descBg = this.add.rectangle(width / 2, 150, 900, 100, 0xFFFFFF);
+        descBg.setStrokeStyle(3, 0x4CAF50);
         
-        const eventText = this.add.text(width / 2, 180, weekEvent.event, {
-            fontSize: '26px',
+        // 事件描述文字
+        const eventText = this.add.text(width / 2, 150, weekEvent.events.description || '', {
+            fontSize: '24px',
             fill: '#333333',
-            fontFamily: 'Arial',
+            fontFamily: 'JasonHandwriting3, Arial',
             align: 'center',
             wordWrap: { width: 850 }
         });
         eventText.setOrigin(0.5);
         
-        // 選項顯示
-        const optionsTitle = this.add.text(width / 2, 280, '請選擇你的行動：', {
-            fontSize: '28px',
-            fill: '#1B5E20',
-            fontFamily: 'Arial',
-            fontStyle: 'bold'
-        });
-        optionsTitle.setOrigin(0.5);
-        
         // 創建選項按鈕
-        const options = weekEvent.options;
+        const options = weekEvent.events.options;
+        const optionKeys = Object.keys(options); // ['A', 'B', 'C', 'D']
         const optionColors = [0x2196F3, 0x4CAF50, 0xFF9800, 0x9C27B0];
         
-        if (options && options.length > 0) {
-            options.forEach((option, index) => {
-                this.createOptionButton(
-                    width / 2,
-                    360 + index * 90,
-                    option,
-                    optionColors[index % optionColors.length]
-                );
-            });
-        }
+        const baseY = 280;
+        const buttonHeight = 70;
+        const spacing = 20;
         
-        // 添加活動圖標提示
-        this.createActivityIcons();
+        optionKeys.forEach((key, index) => {
+            const option = options[key];
+            const buttonY = baseY + index * (buttonHeight + spacing);
+            
+            this.createOptionButton(
+                width / 2,
+                buttonY,
+                option,
+                key,
+                optionColors[index % optionColors.length],
+                weekKey
+            );
+        });
     }
     
-    createOptionButton(x, y, option, color) {
+    createOptionButton(x, y, option, optionKey, color, weekKey) {
         const player = window.GameState.getPlayer();
         const button = this.add.container(x, y);
         
@@ -83,7 +92,7 @@ class EventScene extends Phaser.Scene {
         bg.setStrokeStyle(3, 0xFFFFFF);
         
         // 活動圖標
-        const activityEmoji = GameConfig.activities[option.activity]?.emoji || '📋';
+        const activityEmoji = GameConfig.activities[option.attribute]?.emoji || '📋';
         const emojiText = this.add.text(-380, 0, activityEmoji, {
             fontSize: '32px'
         });
@@ -91,24 +100,14 @@ class EventScene extends Phaser.Scene {
         
         // 選項文字
         const buttonText = this.add.text(-20, 0, option.text, {
-            fontSize: '24px',
+            fontSize: '22px',
             fill: '#FFFFFF',
-            fontFamily: 'Arial',
+            fontFamily: 'JasonHandwriting3, Arial',
             fontStyle: 'bold'
         });
         buttonText.setOrigin(0.5);
         
-        // 變化提示
-        const changesText = this.formatChanges(option.changes);
-        const changesDisplay = this.add.text(350, 0, changesText, {
-            fontSize: '16px',
-            fill: '#FFEB3B',
-            fontFamily: 'Arial',
-            fontStyle: 'bold'
-        });
-        changesDisplay.setOrigin(1, 0.5);
-        
-        button.add([bg, emojiText, buttonText, changesDisplay]);
+        button.add([bg, emojiText, buttonText]);
         
         // 互動效果
         bg.setInteractive({ useHandCursor: true })
@@ -129,19 +128,10 @@ class EventScene extends Phaser.Scene {
                 });
             })
             .on('pointerdown', () => {
-                this.selectOption(option);
+                this.selectOption(option, optionKey, weekKey);
             });
         
         return button;
-    }
-    
-    formatChanges(changes) {
-        const parts = [];
-        if (changes.mood !== 0) parts.push(`😊${changes.mood > 0 ? '+' : ''}${changes.mood}`);
-        if (changes.energy !== 0) parts.push(`💪${changes.energy > 0 ? '+' : ''}${changes.energy}`);
-        if (changes.social !== 0) parts.push(`🤝${changes.social > 0 ? '+' : ''}${changes.social}`);
-        if (changes.knowledge !== 0) parts.push(`📚${changes.knowledge > 0 ? '+' : ''}${changes.knowledge}`);
-        return parts.join(' ');
     }
     
     lightenColor(color) {
@@ -154,20 +144,19 @@ class EventScene extends Phaser.Scene {
                 Math.min(255, b + 30));
     }
     
-    selectOption(option) {
+    selectOption(option, optionKey, weekKey) {
         const player = window.GameState.getPlayer();
         
         // 記錄選擇
-        const eventData = window.GameState.getEventsData()[player.weekNumber];
-        player.recordEvent(player.weekNumber, eventData.event, option.text, option.changes);
+        player.chosen[player.weekNumber] = optionKey;
         
-        // 執行對應的活動
+        // 執行相應的活動以應用屬性變化
         const degree = 1.0;
-        switch (option.activity) {
+        switch (option.attribute) {
             case 'study':
                 player.study(degree);
                 break;
-            case 'socialize':
+            case 'social':
                 player.socialize(degree);
                 break;
             case 'play_game':
@@ -176,18 +165,6 @@ class EventScene extends Phaser.Scene {
             case 'rest':
                 player.rest(degree);
                 break;
-            default:
-                // 直接應用變化
-                player.mood = GameUtils.clamp(player.mood + (option.changes.mood || 0), 0, 100);
-                player.energy = GameUtils.clamp(player.energy + (option.changes.energy || 0), 0, 100);
-                player.social = GameUtils.clamp(player.social + (option.changes.social || 0), 0, 100);
-                player.knowledge = GameUtils.clamp(player.knowledge + (option.changes.knowledge || 0), 0, 100);
-                player.lastWeekChange = [
-                    option.changes.mood || 0,
-                    option.changes.energy || 0,
-                    option.changes.social || 0,
-                    option.changes.knowledge || 0
-                ];
         }
         
         // 顯示選擇結果動畫
@@ -199,15 +176,25 @@ class EventScene extends Phaser.Scene {
         const height = this.cameras.main.height;
         
         // 半透明遮罩
-        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.8);
+        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0);
+        this.tweens.add({
+            targets: overlay,
+            alpha: 0.8,
+            duration: 300
+        });
+        
+        // 結果文字背景
+        const resultBg = this.add.rectangle(width / 2, height / 2, 600, 200, 0xFFFFFF);
+        resultBg.setStrokeStyle(4, 0x4CAF50);
+        resultBg.setAlpha(0);
         
         // 結果文字
-        const resultText = this.add.text(width / 2, height / 2 - 50, 
+        const resultText = this.add.text(width / 2, height / 2 - 40, 
             '你選擇了：\n' + option.text, 
             {
-                fontSize: '36px',
-                fill: '#FFFFFF',
-                fontFamily: 'Arial',
+                fontSize: '28px',
+                fill: '#333333',
+                fontFamily: 'JasonHandwriting3, Arial',
                 align: 'center',
                 lineSpacing: 15
             }
@@ -215,24 +202,26 @@ class EventScene extends Phaser.Scene {
         resultText.setOrigin(0.5);
         resultText.setAlpha(0);
         
-        // 變化提示
+        // 屬性變化提示
+        const player = window.GameState.getPlayer();
         const changesText = this.add.text(width / 2, height / 2 + 60, 
-            this.formatChanges(option.changes), 
+            this.formatChanges(player.lastWeekChange), 
             {
-                fontSize: '32px',
-                fill: '#FFEB3B',
+                fontSize: '22px',
+                fill: '#FF6B6B',
                 fontFamily: 'Arial'
             }
         );
         changesText.setOrigin(0.5);
         changesText.setAlpha(0);
         
-        // 動畫顯示
+        // 動畫顯示結果
         this.tweens.add({
-            targets: [resultText, changesText],
+            targets: [resultBg, resultText, changesText],
             alpha: 1,
-            duration: 800,
+            duration: 600,
             onComplete: () => {
+                // 2秒後返回主場景
                 this.time.delayedCall(2000, () => {
                     this.scene.start('MainScene');
                 });
@@ -240,23 +229,18 @@ class EventScene extends Phaser.Scene {
         });
     }
     
-    createActivityIcons() {
-        const width = this.cameras.main.width;
+    formatChanges(changeList) {
+        // changeList = [mood, energy, social, knowledge]
+        const labels = ['😊心情', '💪體力', '🤝社交', '📚知識'];
+        const parts = [];
         
-        // 圖例
-        const legend = this.add.text(width - 50, 100, 
-            '圖例：\n😊 心情\n💪 體力\n🤝 社交\n📚 知識', 
-            {
-                fontSize: '18px',
-                fill: '#333333',
-                fontFamily: 'Arial',
-                align: 'left',
-                lineSpacing: 8,
-                backgroundColor: '#FFFFFF',
-                padding: { x: 15, y: 10 }
+        changeList.forEach((change, index) => {
+            if (change !== 0) {
+                const sign = change > 0 ? '+' : '';
+                parts.push(`${labels[index]} ${sign}${Math.round(change)}`);
             }
-        );
-        legend.setOrigin(1, 0);
-        legend.setAlpha(0.9);
+        });
+        
+        return parts.length > 0 ? parts.join('  ') : '無變化';
     }
 }
