@@ -36,14 +36,13 @@ jobs:
     - name: Build game with pygbag
       run: |
         echo "Building web version..."
-        pygbag --build main.py
+        # Pygbag needs to run from parent directory
+        pygbag --build --template noctx.tmpl .
         
-    - name: Prepare deployment
+    - name: List build output
       run: |
-        # Copy index.html if it exists
-        if [ -f "index.html" ]; then
-          cp index.html build/web/ || true
-        fi
+        echo "Build directory contents:"
+        ls -la build/web/ || echo "build/web not found"
         
     - name: Setup Pages
       uses: actions/configure-pages@v4
