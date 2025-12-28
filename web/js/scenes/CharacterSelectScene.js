@@ -80,12 +80,13 @@ class CharacterSelectScene extends Phaser.Scene {
         
         // 檢查紋理是否已載入
         if (this.textures.exists(avatarKey)) {
-            avatar = this.add.image(0, -30, avatarKey);
-            avatar.setScale(1.5);
+            avatar = this.add.image(0, -20, avatarKey);
+            // 頭像圖片是 744x744，調整縮放使其適應卡片（240px寬）
+            avatar.setScale(0.25);
         } else {
             // 如果圖片沒有載入，使用純色圓形替代
             console.warn(`圖片 ${avatarKey} 未載入`);
-            avatar = this.add.circle(0, -30, 50, parseInt(characterData.color.replace('#', '0x')));
+            avatar = this.add.circle(0, -20, 50, parseInt(characterData.color.replace('#', '0x')));
         }
         
         // 屬性顯示
