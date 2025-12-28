@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene
 from UI.components.character_animator import CharacterAnimator
 import setting
@@ -50,7 +51,7 @@ class TakeTestScene(BaseScene):
         prompt_rect = prompt_surface.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 50))
         screen.blit(prompt_surface, prompt_rect)
 
-    def run(self):
+    async def run(self):
         if self.player.week_number ==8 or self.player.week_number == 16:
                         self.player.event_history[self.player.week_number] = {
                             "event_text": "",
@@ -61,6 +62,7 @@ class TakeTestScene(BaseScene):
 
         self.running = True
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
@@ -166,9 +168,10 @@ class GradingScene(BaseScene):
             prompt_rect = prompt_surface.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 350))
             screen.blit(prompt_surface, prompt_rect)
 
-    def run(self):
+    async def run(self):
         self.running = True
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if self.show_full_score and event.type == pygame.MOUSEBUTTONDOWN:
                     self.running = False

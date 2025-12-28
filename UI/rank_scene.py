@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.character_animator import CharacterAnimator
 from UI.components.base_scene import BaseScene
 from UI.components.audio_manager import AudioManager
@@ -228,8 +229,9 @@ class RankScene(BaseScene):
                     self.page_timer = 0
                     self.audio.play_sound(setting.SoundEffect.NEXT_PAGE_PATH)
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 self.handle_event(event)
 

@@ -2,6 +2,7 @@ import pygame
 import os
 import setting
 from UI.components.audio_manager import AudioManager
+import asyncio
 
 class BaseScene:
     def __init__(self, screen):
@@ -24,8 +25,9 @@ class BaseScene:
     def draw(self):
         pass  # 由子類別實作
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)  # Yield control for web compatibility
             result = None
             result = self.update()
             if result is not None:

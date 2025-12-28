@@ -12,7 +12,7 @@ async def main():
     pygame.display.set_caption("Lazy Me Today Too")
     
     manager = SceneManager(screen)
-    if manager.run() == "QUIT":
+    if await manager.run() == "QUIT":
         pygame.quit()
         
 

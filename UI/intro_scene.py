@@ -3,6 +3,7 @@ from UI.components.character_animator import CharacterAnimator
 from UI.components.base_scene import BaseScene
 from UI.components.audio_manager import AudioManager
 import setting
+import asyncio
 
 class IntroScene(BaseScene):
     def __init__(self, screen):
@@ -42,9 +43,10 @@ class IntroScene(BaseScene):
         self.animator.frame_delay = 3  # 控制動畫速度
 
         
-    def run(self):
+    async def run(self):
         self.running = True
         while self.running:
+            await asyncio.sleep(0)
             self.clock.tick(self.FPS)
             for event in pygame.event.get():
                 self.handle_event(event)

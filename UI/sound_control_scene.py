@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene
 from UI.components.audio_manager import AudioManager
 from UI.components.character_animator import CharacterAnimator
@@ -111,8 +112,9 @@ class SoundControlScene(BaseScene):
         knob_x = rect.left + int(volume * rect.width)
         pygame.draw.circle(screen, (250, 250, 250), (knob_x, rect.centery), self.knob_radius)
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 self.handle_event(event)
 

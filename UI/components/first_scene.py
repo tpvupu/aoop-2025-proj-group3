@@ -1,15 +1,17 @@
 import pygame
 import setting
+import asyncio
 
 class FirstScene:
     def __init__(self, screen):
         self.screen = screen
         self.running = True
         
-    def run(self):
+    async def run(self):
         self.running = True
         clock = pygame.time.Clock()
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return "QUIT"

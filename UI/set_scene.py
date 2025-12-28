@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene
 from UI.components.image_button import ImageButton
 import setting
@@ -36,8 +37,9 @@ class SetScene(BaseScene):
         self.screen.blit(shadow, (x + 2, y + 2))
         self.screen.blit(surface, (x, y))
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             self.screen.blit(self.blurred_bg, (0, 0))
             self.screen.blit(self.panel, (0, 0))
             self.draw_week_number()

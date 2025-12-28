@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 import math
 import random
 from UI.components.base_scene import BaseScene
@@ -169,10 +170,11 @@ class LuckyWheelScene(BaseScene):
         
        
     
-    def run(self):
+    async def run(self):
         self.running = True
         clock = pygame.time.Clock()
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False

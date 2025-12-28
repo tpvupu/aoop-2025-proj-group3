@@ -14,6 +14,7 @@ from UI.sound_control_scene import SoundControlScene
 from UI.end_scene import EndScene
 from UI.feedback_scene import FeedbackScene
 from UI.advice_scene import AdviceScene
+import asyncio
 
 # scene_manager.py
 class SceneManager:
@@ -39,31 +40,32 @@ class SceneManager:
             "DIARY": self.diary_scene
         }
 
-    def run(self):
+    async def run(self):
         # print("SceneManager 開始跑了")
         next_scene = "FIRST"
         while self.running and next_scene:
+            await asyncio.sleep(0)  # Yield control for web compatibility
             # print(f"[SceneManager] 下一個場景是：{next_scene}") 
             handler = self.scene_map.get(next_scene)
             if handler:
-                next_scene = handler()
+                next_scene = await handler()
             else:
                 print(f"未知場景：{next_scene}")
                 self.running = False
 
     # --- 各個場景 ---
-    def first_scene(self):
+    async def first_scene(self):
         scene = FirstScene(self.screen)
-        result = scene.run()
+        result = await scene.run()
         return {
             "START": "START",
             "QUIT": "QUIT"
         }.get(result, "FIRST")
 
-    def start_scene(self):
+    async def start_scene(self):
         # print("[SceneManager] 進入 start_scene")
         scene = StartScene(self.screen)
-        result = scene.run()
+        result = await scene.run()
         # print(f"[SceneManager] StartScene 回傳：{result}") 
         return {
             "START": "CHARACTER_SELECT",
@@ -72,14 +74,14 @@ class SceneManager:
             "QUIT": "QUIT"
         }.get(result, "START")
     
-    def intro_scene(self):
+    async def intro_scene(self):
         scene = IntroScene(self.screen)
-        scene.run()
+        await scene.run()
         return "START"
 
-    def character_select(self):
+    async def character_select(self):
         scene = CharacterSelectScene(self.screen)
-        selected = scene.run()
+        selected = await scene.run()
         if selected == "布布 Bubu":
             self.player = Bubu()
         elif selected == "一二 Yier":
@@ -92,16 +94,16 @@ class SceneManager:
             return "QUIT"
         return "MAIN"
     
-    def sound_control_scene(self):
-        SoundControlScene(self.screen).run()
+    async def sound_control_scene(self):
+        await SoundControlScene(self.screen).run()
         return "START" if self.player is None else "SETTING"
 
-    def main_game_loop(self):
+    async def main_game_loop(self):
         if self.player.week_number >= 16:
             return "END"
 
         scene = MainScene(self.screen, self.player)
-        result = scene.run()
+        result = await scene.run()
 
         return {
             "Next Story": "STORY",
@@ -111,18 +113,18 @@ class SceneManager:
             "RESTART": "CHARACTER_SELECT",
         }.get(result, "MAIN")
 
-    def story_and_event(self):
+    async def story_and_event(self):
         self.player.week_number += 1
         self.player.week_data = self.player.all_weeks_data[f"week_{self.player.week_number}"]
-        StoryScene(self.screen, self.player).run()
-        EventScene(self.screen, self.player).run()
+        await StoryScene(self.screen, self.player).run()
+        await EventScene(self.screen, self.player).run()
         return "MAIN"
 
-    def setting_scene(self):
+    async def setting_scene(self):
         from UI.components.blur import fast_blur
         blurred = fast_blur(self.screen.copy())
         set_scene = SetScene(self.screen, blurred, self.player)
-        result = set_scene.run()
+        result = await set_scene.run()
         # print(f"[SceneManager] SetScene 回傳：{result}") 
         return {
             "BACK": "MAIN",
@@ -132,10 +134,10 @@ class SceneManager:
         }.get(result, "MAIN")
 
     
-    def diary_scene(self):
+    async def diary_scene(self):
         # print("進入日記場景")
         scene = DiaryScene(self.screen, self.player)
-        result = scene.run()
+        result = await scene.run()
         #return "MAIN" if result == "BACK" else result
         if  self.player.week_number < 16:
             return {
@@ -148,12 +150,12 @@ class SceneManager:
                 "QUIT": "QUIT"
             }.get(result, "END")
 
-    def end_scene(self):
+    async def end_scene(self):
         if not self.player.GPA:
             self.player.calculate_GPA()
 
         scene = EndScene(self.screen, self.player)
-        result = scene.run()
+        result = await scene.run()
         return {
             "DIARY": "DIARY",
             "SHOW_RANK": "RANK",
@@ -163,29 +165,29 @@ class SceneManager:
             "QUIT": "QUIT"
         }.get(result, "END")
 
-    def advice_scene(self):
+    async def advice_scene(self):
         scene = AdviceScene(self.screen, self.player)
-        result = scene.run()
+        result = await scene.run()
         return {
             "END": "END",
             "QUIT": "QUIT"
         }.get(result, "END")
 
 
-    def rank_scene(self):
+    async def rank_scene(self):
         scene = RankScene(self.screen, self.player)
-        scene.run()
+        await scene.run()
         return "END"
     
-    def feedback_scene(self):
-        FeedbackScene(self.screen, self.player).run()
+    async def feedback_scene(self):
+        await FeedbackScene(self.screen, self.player).run()
         return "END"
 
-    def restart_game(self):
+    async def restart_game(self):
         # print("[SceneManager] restart_game 觸發了！")
         self.player = None
         return "START"
 
-    def quit_game(self):
+    async def quit_game(self):
         self.running = False
         return  "QUIT"

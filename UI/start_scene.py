@@ -3,6 +3,7 @@ from UI.components.base_scene import BaseScene
 from UI.components.character_animator import CharacterAnimator
 from UI.components.audio_manager import AudioManager
 import setting
+import asyncio
 
 class StartScene(BaseScene):
     def __init__(self, screen):
@@ -140,8 +141,9 @@ class StartScene(BaseScene):
     # -------------------------------------------------------------
     # 主循環
     # -------------------------------------------------------------
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             result = self.update()
             if result is not None:
                 return result

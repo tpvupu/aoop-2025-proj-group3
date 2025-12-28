@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene, draw_wrapped_text, wrap_text
 from UI.components.character_animator import CharacterAnimator
 from UI.components.audio_manager import AudioManager
@@ -222,10 +223,11 @@ class AdviceScene(BaseScene):
         
         pygame.display.flip()
     
-    def run(self):
+    async def run(self):
         """主循環"""
         self.running = True
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return "QUIT"
