@@ -75,7 +75,6 @@ oop-2025-proj-group10/
 │
 ├── main.py                      # 主程式入口，負責遊戲流程控制
 ├── character.py                 # 角色類別與屬性、行為邏輯
-├── simulation.py                # 用以模擬隨機選擇結果
 ├── scene_manager.py             # 用以控制Scene之間的切換
 ├── setting.py                   # 用以設定遊戲參數
 │
@@ -109,7 +108,12 @@ oop-2025-proj-group10/
 ├── event/
 │   ├── event.json               # 各週事件資料
 │   └── game_setting/            # 遊戲劇情文件
-│ 
+|
+├── AI/                          # 模擬系統
+│   ├── bvtree.py                # 選擇行為樹策略
+|   ├── simulation.py            # 模擬程式
+|   └── test_...py               # 其他測試檔
+|
 ├── README.md                    # 專案說明文件
 ├── Docker/
 ```
