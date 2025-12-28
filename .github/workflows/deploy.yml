@@ -36,13 +36,12 @@ jobs:
     - name: Build game with pygbag
       run: |
         echo "Building web version..."
-        mkdir -p build/web
-        python -m pygbag --build .
+        python -m pygbag --build main.py
         
     - name: List build output
       run: |
         echo "Build directory contents:"
-        ls -laR build/web/ | head -50 || echo "build/web not found"
+        ls -lh build/web/
         
     - name: Setup Pages
       uses: actions/configure-pages@v4
