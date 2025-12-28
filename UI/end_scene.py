@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene, draw_wrapped_text
 from UI.main_scene import MainScene
 from UI.components.character_animator import CharacterAnimator
@@ -326,12 +327,13 @@ class EndScene(MainScene):
             self.diary_hover = False
         return None
 
-    def run(self):
+    async def run(self):
         self.running = True
         if self.audio.is_sound_playing(setting.SoundEffect.CHEER_CHEER_PATH):
             self.audio.stop_sound(setting.SoundEffect.CHEER_CHEER_PATH)
         self.audio.play_sound(setting.SoundEffect.CHEER_CHEER_PATH)
         while self.running:
+            await asyncio.sleep(0)
             result = None
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

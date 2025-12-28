@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 import sys
 import json
 from UI.components.base_scene import BaseScene
@@ -133,9 +134,10 @@ class StoryScene(BaseScene):
         # 水平置中，垂直位置在文字區底部+50
         self.screen.blit(tip, (self.screen.get_width() // 2 - tip.get_width() // 2, 630))
         
-    def run(self):
+    async def run(self):
         
         while self.running:
+            await asyncio.sleep(0)
             self.update()
             self.draw()
             pygame.display.flip()

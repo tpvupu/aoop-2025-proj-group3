@@ -1,5 +1,6 @@
 
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene
 from UI.components.image_button import ImageButton
 import setting
@@ -63,8 +64,9 @@ class ConfirmScene(BaseScene):
             size=(80, 40), text="否", font=font
         )
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             # 畫模糊背景
             self.screen.blit(self.blurred_bg, (0, 0))
 

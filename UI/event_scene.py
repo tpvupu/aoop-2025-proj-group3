@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 import sys
 from UI.components.base_scene import BaseScene, wrap_text
 from UI.components.button import Button
@@ -162,8 +163,9 @@ class EventScene(BaseScene):
             surface.blit(txt_surf, (x, y))
             y += line_height + line_spacing
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             result = None
             result = self.update()
             if result is not None:

@@ -2,6 +2,7 @@ import pygame
 from UI.components.base_scene import BaseScene
 from UI.components.audio_manager import AudioManager
 import setting
+import asyncio
 
 
 class CharacterSelectScene(BaseScene):
@@ -180,8 +181,9 @@ class CharacterSelectScene(BaseScene):
     # ------------------------------------------------------------------
     # 主循環：update → draw
     # ------------------------------------------------------------------
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             result = self.update()
             if result is not None:   # 取得角色名稱或 "QUIT"
                 return result

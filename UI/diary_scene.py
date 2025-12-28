@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 from UI.components.base_scene import BaseScene, draw_wrapped_text
 from UI.components.image_button import ImageButton
 import setting
@@ -76,8 +77,9 @@ class DiaryScene(BaseScene):
         self.btn_right.draw(self.screen)
         self.btn_back.draw(self.screen)
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             self.animator.update()
             self.btn_left.update()
             self.btn_right.update()

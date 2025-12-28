@@ -1,4 +1,5 @@
 from UI.components.base_scene import BaseScene
+import asyncio
 import setting
 from UI.components.character_animator import CharacterAnimator
 import pygame
@@ -63,9 +64,10 @@ class FeedbackScene(BaseScene):
         screen.blit(self.prompt_surface, self.prompt_rect)
         screen.blit(self.title_surface, self.title_rect)
 
-    def run(self):
+    async def run(self):
         self.running = True
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False

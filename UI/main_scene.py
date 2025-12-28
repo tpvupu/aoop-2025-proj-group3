@@ -1,4 +1,5 @@
 import pygame
+import asyncio
 import os
 import json
 import random
@@ -377,8 +378,9 @@ class MainScene(BaseScene):
                 self.diary_hover = False
 
 
-    def run(self):
+    async def run(self):
         while self.running:
+            await asyncio.sleep(0)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
