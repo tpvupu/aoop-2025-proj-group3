@@ -13,8 +13,18 @@ class MainScene extends Phaser.Scene {
         const height = this.cameras.main.height;
         const player = window.GameState.getPlayer();
         
-        // 背景
-        this.add.rectangle(width / 2, height / 2, width, height, 0xF0F4F8);
+        // 背景 - 嘗試載入原有背景圖
+        try {
+            if (this.textures.exists('background_intro')) {
+                this.add.image(width / 2, height / 2, 'background_intro').setScale(
+                    Math.max(width / 1200, height / 800)
+                );
+            } else {
+                this.add.rectangle(width / 2, height / 2, width, height, 0xF0F4F8);
+            }
+        } catch (e) {
+            this.add.rectangle(width / 2, height / 2, width, height, 0xF0F4F8);
+        }
         
         // 頂部資訊欄
         this.createTopBar();
