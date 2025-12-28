@@ -6,8 +6,6 @@
 class CharacterSelectScene extends Phaser.Scene {
     constructor() {
         super({ key: 'CharacterSelectScene' });
-        this.frameIndex = 0;
-        this.animationTimer = 0;
         this.animationSpeed = 150; // 每幀持續時間（毫秒）
         this.cards = [];
         this.frameCount = {
@@ -48,31 +46,32 @@ class CharacterSelectScene extends Phaser.Scene {
         // 卡片配置 - 模仿 Pygame 版本的四角位置
         const cardWidth = 420;
         const cardHeight = 280;
-        const margin = 50;
+        const margin = 30;
+        const verticalMargin = 50;
         
         const cardConfigs = [
             {
                 charKey: 'bubu',
                 x: margin + cardWidth / 2,
-                y: 80,
+                y: verticalMargin + cardHeight / 2,
                 description: "大家好～我是布布！\n我喜歡在網路上盡情地打遊戲！\n希望這學期所有的課都可以過"
             },
             {
                 charKey: 'yier',
                 x: width - margin - cardWidth / 2,
-                y: 80,
+                y: verticalMargin + cardHeight / 2,
                 description: "大家好～我是一二！\n我熱衷於系上活動以及社團～\n認識好多學長姐嘿嘿～"
             },
             {
                 charKey: 'mitao',
                 x: margin + cardWidth / 2,
-                y: height - 80,
+                y: height - verticalMargin - cardHeight / 2,
                 description: "大家好～我是蜜桃！\n嗚嗚嗚這學期不小心選太多課...\n現在實在是捲不動了～"
             },
             {
                 charKey: 'huihui',
                 x: width - margin - cardWidth / 2,
-                y: height - 80,
+                y: height - verticalMargin - cardHeight / 2,
                 description: "大家好～我是灰灰！\n我正在追求自己真正想做的事！\n重要的是追尋我的快樂貓生！"
             }
         ];
@@ -92,7 +91,7 @@ class CharacterSelectScene extends Phaser.Scene {
         });
         
         // 啟動動畫更新循環
-        this.time.addTimer({
+        this.time.addEvent({
             delay: this.animationSpeed,
             loop: true,
             callback: this.updateAnimation,
@@ -105,8 +104,9 @@ class CharacterSelectScene extends Phaser.Scene {
         this.cards.forEach(cardData => {
             if (cardData.animImage) {
                 const maxFrames = this.frameCount[cardData.charKey];
-                this.frameIndex = (this.frameIndex + 1) % maxFrames;
-                const nextFrameKey = `${cardData.charKey}_intro_${this.frameIndex}`;
+                // 每張卡片有自己的幀索引
+                cardData.frameIndex = (cardData.frameIndex + 1) % maxFrames;
+                const nextFrameKey = `${cardData.charKey}_intro_${cardData.frameIndex}`;
                 
                 if (this.textures.exists(nextFrameKey)) {
                     cardData.animImage.setTexture(nextFrameKey);
@@ -114,11 +114,10 @@ class CharacterSelectScene extends Phaser.Scene {
             }
         });
     }
-    }
     
     createCharacterCard(x, y, characterData, cardWidth, cardHeight, description, charKey) {
         const card = this.add.container(x, y);
-        const cardData = { charKey, animImage: null, container: card };
+        const cardData = { charKey, animImage: null, container: card, frameIndex: 0 };
         
         // 卡片背景 - 白色半透明，邊框有顏色
         const bg = this.add.rectangle(0, 0, cardWidth, cardHeight, 0xFFFFFF, 0.92);
@@ -133,7 +132,7 @@ class CharacterSelectScene extends Phaser.Scene {
             {
                 fontSize: '14px',
                 fill: '#666666',
-                fontFamily: '微軟正黑體, Arial',
+                fontFamily: 'Arial, sans-serif',
                 wordWrap: { width: cardWidth - 160 },
                 lineSpacing: 5
             }
@@ -148,7 +147,7 @@ class CharacterSelectScene extends Phaser.Scene {
             {
                 fontSize: '24px',
                 fill: '#333333',
-                fontFamily: '微軟正黑體, Arial',
+                fontFamily: 'Arial, sans-serif',
                 fontStyle: 'bold'
             }
         );
@@ -239,7 +238,7 @@ class CharacterSelectScene extends Phaser.Scene {
             {
                 fontSize: '48px',
                 fill: '#FFEB3B',
-                fontFamily: '微軟正黑體, Arial',
+                fontFamily: 'Arial, sans-serif',
                 fontStyle: 'bold'
             }
         );
